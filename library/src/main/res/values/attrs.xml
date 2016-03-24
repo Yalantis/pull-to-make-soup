@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <declare-styleable name="RefreshView">
+        <attr name="type" format="enum">
+            <enum name="soup" value="0" />
+        </attr>
+    </declare-styleable>
+
+</resources>
