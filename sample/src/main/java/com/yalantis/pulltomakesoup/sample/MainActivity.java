@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.yalantis.pulltomakesoup.PullToRefreshView;
-import com.yalantis.pulltomakesoup.sample.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,11 +22,11 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     private PullToRefreshView mPullToRefreshView;
-    public static final int REFRESH_DELAY = 4000;
-    public static final String KEY_ICON = "icon";
-    public static final String KEY_COLOR = "color";
+    private static final int REFRESH_DELAY = 4000;
+    private static final String KEY_ICON = "icon";
+    private static final String KEY_COLOR = "color";
 
-    protected List<Map<String, Integer>> mSampleList;
+    private List<Map<String, Integer>> mSampleList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,8 +96,8 @@ public class MainActivity extends AppCompatActivity {
 
     private class SampleHolder extends RecyclerView.ViewHolder {
 
-        private View mRootView;
-        private ImageView mImageViewIcon;
+        private final View mRootView;
+        private final ImageView mImageViewIcon;
 
         private Map<String, Integer> mData;
 

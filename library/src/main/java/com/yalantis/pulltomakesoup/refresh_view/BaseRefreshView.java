@@ -14,21 +14,15 @@ import com.yalantis.pulltomakesoup.PullToRefreshView;
  */
 public abstract class BaseRefreshView extends Drawable implements Drawable.Callback, Animatable {
 
-    private PullToRefreshView mRefreshLayout;
-    private boolean mEndOfRefreshing;
-    boolean a= true|false;
+    private final PullToRefreshView mRefreshLayout;
 
-    public BaseRefreshView(Context context, PullToRefreshView layout) {
+    BaseRefreshView(PullToRefreshView layout) {
         mRefreshLayout = layout;
     }
 
-    public Context getContext() {
+    Context getContext() {
         return mRefreshLayout != null ? mRefreshLayout.getContext() : null;
 
-    }
-
-    public PullToRefreshView getRefreshLayout() {
-        return mRefreshLayout;
     }
 
     public abstract void setPercent(float percent, boolean invalidate);
@@ -71,16 +65,6 @@ public abstract class BaseRefreshView extends Drawable implements Drawable.Callb
     @Override
     public void setColorFilter(ColorFilter cf) {
 
-    }
-
-    /**
-     * Our animation depend on type of current work of refreshing.
-     * We should to do different things when it's end of refreshing
-     *
-     * @param endOfRefreshing - we will check current state of refresh with this
-     */
-    public void setEndOfRefreshing(boolean endOfRefreshing) {
-        mEndOfRefreshing = endOfRefreshing;
     }
 
 }

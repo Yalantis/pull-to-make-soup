@@ -1,20 +1,13 @@
 package com.yalantis.pulltomakesoup.refresh_view;
 
-import android.view.animation.AnimationSet;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.drawable.Animatable;
-import android.graphics.drawable.Drawable;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.Interpolator;
+import android.view.animation.AnimationSet;
 import android.view.animation.Transformation;
 
 import com.yalantis.pulltomakesoup.PullToRefreshView;
@@ -26,8 +19,8 @@ import com.yalantis.pulltomakesoup.utils.Utils;
  */
 public class SoupRefreshView extends BaseRefreshView implements Animatable {
 
-    private PullToRefreshView mParent;
-    private Matrix mMatrix;
+    private final PullToRefreshView mParent;
+    private final Matrix mMatrix;
     private Animation mBounceAnimation;
     private Animation mScaleAnimation;
     private Animation mFlameScaleAnimation;
@@ -39,29 +32,16 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
     private Animation mBubble5Animation;
     private Animation mBubble6Animation;
     private Animation mCoverAnimation;
-    private static final int ANIMATION_DURATION = 700;
-    private static final int ANIMATION_SCALE_DURATION = 500;
-    private static final int ANIMATION_FLAME_SCALE_DURATION = 100;
-    private static final int ANIMATION_FLAME_BURN_DURATION = 180;
-    private static final int ANIMATION_BUBBLE_DURATION = 980;
-    private static final int ANIMATION_COVER_DURATION = 580;
-
 
     private static final int ANIMATION_BUBBLE1_OFFSET = 200;
-    private static final int ANIMATION_BUBBLE2_OFFSET  = 300;
-    private static final int ANIMATION_BUBBLE3_OFFSET  = 500;
-    private static final int ANIMATION_BUBBLE4_OFFSET  = 700;
-    private static final int ANIMATION_BUBBLE5_OFFSET  = 800;
-    private static final int ANIMATION_COVER_OFFSET  = 20;
+    private static final int ANIMATION_BUBBLE2_OFFSET = 300;
+    private static final int ANIMATION_BUBBLE3_OFFSET = 500;
+    private static final int ANIMATION_BUBBLE4_OFFSET = 700;
+    private static final int ANIMATION_BUBBLE5_OFFSET = 800;
 
-    private float mTop;
+
     private float mScreenWidth;
     private float mScreenHeight;
-
-
-    private static final Interpolator BOUNCE_INTERPOLATOR = new BounceInterpolator();
-    private static final Interpolator ACELERATE_INTERPOLATOR = new AccelerateInterpolator();
-    private static final Interpolator DECELERATE_INTERPOLATOR = new AccelerateDecelerateInterpolator();
 
     private float mPanTopOffset;
 
@@ -90,21 +70,21 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
     private float mCoverStartPointY;
     private float mCoverFinalPointY;
 
-    private boolean isCoverDroped;
+    private boolean isCoverDropped;
     private boolean isShadowDisplayed;
     private float mScale;
     private float mFlameScale;
     private float mFlameBurn;
-    private float mFlameMinScale = 0.9f;
+    private final float mFlameMinScale = 0.9f;
     private float mBubble1Move;
     private float mBubble2Move;
     private float mBubble3Move;
     private float mBubble4Move;
     private float mBubble5Move;
     private float mBubble6Move;
-    private float mBubbleScaleOffset =  Utils.convertDpToFloatPixel(getContext(),100);
+    private final Context mContext = getContext();
+    private final float mBubbleScaleOffset = Utils.convertDpToFloatPixel(mContext, 100);
     private float mCoverJump;
-
 
 
     private float mCarrotFinalPointX;
@@ -170,8 +150,18 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
     private float mBubble6LeftOffset;
 
 
-    public SoupRefreshView(Context context, final PullToRefreshView layout) {
-        super(context, layout);
+    private float mCirclePivotX;
+    private float mCirclePivotY;
+    private float mBubble1PivotX;
+    private float mBubble2PivotX;
+    private float mBubble3PivotX;
+    private float mBubble4PivotX;
+    private float mBubble5PivotX;
+    private float mBubble6PivotX;
+
+
+    public SoupRefreshView(final PullToRefreshView layout) {
+        super(layout);
         mParent = layout;
         mMatrix = new Matrix();
         setupAnimations();
@@ -181,601 +171,118 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
                 initiateDimens(layout.getWidth());
             }
         });
+
     }
 
     private void initiateDimens(int viewWidth) {
         if (viewWidth <= 0 || viewWidth == mScreenWidth) return;
         mScreenWidth = viewWidth;
-        mScreenHeight = getContext().getResources().getDisplayMetrics().heightPixels;
+        mScreenHeight = mContext.getResources().getDisplayMetrics().heightPixels;
 
 
         createBitmaps();
 
-        mPanTopOffset = Utils.convertDpToFloatPixel(getContext(), 60);
+        mPanTopOffset = Utils.convertDpToFloatPixel(mContext, 60);
 
-        mCoverOffset = Utils.convertDpToFloatPixel(getContext(), 90);
+        mCoverOffset = Utils.convertDpToFloatPixel(mContext, 90);
 
-        mCoverStartPointY = Utils.convertDpToFloatPixel(getContext(), 10);
-        mCoverFinalPointY = Utils.convertDpToFloatPixel(getContext(), 70);
+        mCoverStartPointY = Utils.convertDpToFloatPixel(mContext, 10);
+        mCoverFinalPointY = Utils.convertDpToFloatPixel(mContext, 70);
 
 
         mCarrotStartPointX = (mScreenWidth / 100) * 79;
         mCarrotFinalPointX = (mScreenWidth / 100) * 30.0f;
 
 
-        mCarrotFinalPointY = Utils.convertDpToFloatPixel(getContext(), 245);
-        mCarrotStartPointY = Utils.convertDpToFloatPixel(getContext(), 161);
-        mCarrotOffset = Utils.convertDpToFloatPixel(getContext(), 90);
+        mCarrotFinalPointY = Utils.convertDpToFloatPixel(mContext, 245);
+        mCarrotStartPointY = Utils.convertDpToFloatPixel(mContext, 161);
+        mCarrotOffset = Utils.convertDpToFloatPixel(mContext, 90);
 
         mPotatoFinalPointX = (mScreenWidth / 100) * -25;
         mPotatoStartPointX = (mScreenWidth / 100) * 14.5f;
 
 
-        mPotatoStartPointY = Utils.convertDpToFloatPixel(getContext(), 150);
-        mPotatoFinalPointY = Utils.convertDpToFloatPixel(getContext(), 237);
-        mPotatoOffset = Utils.convertDpToFloatPixel(getContext(), 90);
+        mPotatoStartPointY = Utils.convertDpToFloatPixel(mContext, 150);
+        mPotatoFinalPointY = Utils.convertDpToFloatPixel(mContext, 237);
+        mPotatoOffset = Utils.convertDpToFloatPixel(mContext, 90);
 
 
         mRightPeaFinalPointX = (mScreenWidth / 100) * 30.5f;
         mRightPeaStartPointX = (mScreenWidth / 100) * 88;
 
-        mRightPeaStartPointY = Utils.convertDpToFloatPixel(getContext(), 150);
-        mRightPeaFinalPointY = Utils.convertDpToFloatPixel(getContext(), 242);
-        mRightPeaOffset = Utils.convertDpToFloatPixel(getContext(), 90);
+        mRightPeaStartPointY = Utils.convertDpToFloatPixel(mContext, 150);
+        mRightPeaFinalPointY = Utils.convertDpToFloatPixel(mContext, 242);
+        mRightPeaOffset = Utils.convertDpToFloatPixel(mContext, 90);
 
         mLeftPeaStartPointX = (mScreenWidth / 100) * 7.5f;
         mLeftPeaFinalPointX = (mScreenWidth / 100) * -45;
 
-        mLeftPeaStartPointY = Utils.convertDpToFloatPixel(getContext(), 150);
-        mLeftPeaFinalPointY = Utils.convertDpToFloatPixel(getContext(), 242);
-        mLeftPeaOffset = Utils.convertDpToFloatPixel(getContext(), 90);
+        mLeftPeaStartPointY = Utils.convertDpToFloatPixel(mContext, 150);
+        mLeftPeaFinalPointY = Utils.convertDpToFloatPixel(mContext, 242);
+        mLeftPeaOffset = Utils.convertDpToFloatPixel(mContext, 90);
 
-        mFlame1TopOffset = Utils.convertDpToFloatPixel(getContext(), 134);
+        mFlame1TopOffset = Utils.convertDpToFloatPixel(mContext, 134);
         mFlame1LeftOffset = (mScreenWidth / 100) * 42;
 
         mFlame2LeftOffset = (mScreenWidth / 100) * 45;
 
-        mFlame3TopOffset = Utils.convertDpToFloatPixel(getContext(), 132);
+        mFlame3TopOffset = Utils.convertDpToFloatPixel(mContext, 132);
         mFlame3LeftOffset = (mScreenWidth / 100) * 48.5f;
 
-        mFlame4TopOffset = Utils.convertDpToFloatPixel(getContext(), 134);
+        mFlame4TopOffset = Utils.convertDpToFloatPixel(mContext, 134);
         mFlame4LeftOffset = (mScreenWidth / 100) * 51.5f;
 
-        mFlame5TopOffset = Utils.convertDpToFloatPixel(getContext(), 134);
+        mFlame5TopOffset = Utils.convertDpToFloatPixel(mContext, 134);
         mFlame5LeftOffset = (mScreenWidth / 100) * 54f;
 
-        mBubble1TopOffset = Utils.convertDpToFloatPixel(getContext(), 144);
+        mBubble1TopOffset = Utils.convertDpToFloatPixel(mContext, 144);
         mBubble1LeftOffset = (mScreenWidth / 100) * 40;
 
-        mBubble2TopOffset = Utils.convertDpToFloatPixel(getContext(), 144);
+        mBubble2TopOffset = Utils.convertDpToFloatPixel(mContext, 144);
         mBubble2LeftOffset = (mScreenWidth / 100) * 42;
 
-        mBubble3TopOffset = Utils.convertDpToFloatPixel(getContext(), 144);
+        mBubble3TopOffset = Utils.convertDpToFloatPixel(mContext, 144);
         mBubble3LeftOffset = (mScreenWidth / 100) * 44;
 
-        mBubble4TopOffset = Utils.convertDpToFloatPixel(getContext(), 144);
+        mBubble4TopOffset = Utils.convertDpToFloatPixel(mContext, 144);
         mBubble4LeftOffset = (mScreenWidth / 100) * 46;
 
-        mBubble5TopOffset = Utils.convertDpToFloatPixel(getContext(), 144);
+        mBubble5TopOffset = Utils.convertDpToFloatPixel(mContext, 144);
         mBubble5LeftOffset = (mScreenWidth / 100) * 48;
 
-        mBubble6TopOffset = Utils.convertDpToFloatPixel(getContext(), 144);
+        mBubble6TopOffset = Utils.convertDpToFloatPixel(mContext, 144);
         mBubble6LeftOffset = (mScreenWidth / 100) * 50;
 
-        mTop = -mParent.getTotalDragDistance();
+        mCirclePivotX = Utils.convertDpToPixel(mContext, 100);
+        mCirclePivotY = Utils.convertDpToPixel(mContext, 40);
 
+        mBubble2PivotX = mBubble2LeftOffset - Utils.convertDpToFloatPixel(mContext, 140);
+        mBubble1PivotX = mBubble1LeftOffset - Utils.convertDpToFloatPixel(mContext, 140);
+        mBubble3PivotX = mBubble3LeftOffset - Utils.convertDpToFloatPixel(mContext, 140);
+        mBubble4PivotX = mBubble4LeftOffset - Utils.convertDpToFloatPixel(mContext, 140);
+        mBubble5PivotX = mBubble5LeftOffset - Utils.convertDpToFloatPixel(mContext, 140);
+        mBubble6PivotX = mBubble6LeftOffset - Utils.convertDpToFloatPixel(mContext, 140);
 
     }
 
     private void createBitmaps() {
+        CreateBitmapFactory createBitmapFactory = new CreateBitmapFactory(mContext);
+        mPan = createBitmapFactory.getBitmapFromImage(R.drawable.pan);
+        mCircle = createBitmapFactory.getBitmapFromImage(R.drawable.circle);
+        mPotato = createBitmapFactory.getBitmapFromImage(R.drawable.potato);
+        mCarrot = createBitmapFactory.getBitmapFromImage(R.drawable.carrot);
+        mRightPea = createBitmapFactory.getBitmapFromImage(R.drawable.pea);
+        mLeftPea = createBitmapFactory.getBitmapFromImage(R.drawable.pea);
+        mCover = createBitmapFactory.getBitmapFromImage(R.drawable.pan_cover);
+        mWater = createBitmapFactory.getBitmapFromImage(R.drawable.water);
+        mShadow = createBitmapFactory.getBitmapFromImage(R.drawable.shadow);
+        mFlame1 = createBitmapFactory.getBitmapFromImage(R.drawable.flame1);
+        mFlame2 = createBitmapFactory.getBitmapFromImage(R.drawable.flame2);
+        mFlame3 = createBitmapFactory.getBitmapFromImage(R.drawable.flame3);
+        mFlame4 = createBitmapFactory.getBitmapFromImage(R.drawable.flame4);
+        mFlame5 = createBitmapFactory.getBitmapFromImage(R.drawable.flame5);
+        mBubble = createBitmapFactory.getBitmapFromDrawable(R.drawable.bubble);
 
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
-
-        mPan = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.pan, options);
-        mCircle = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.circle, options);
-        mPotato = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.potato, options);
-        mCarrot = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.carrot, options);
-        mRightPea = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.pea, options);
-        mLeftPea = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.pea, options);
-        mCover = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.pan_cover, options);
-        mWater = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.water, options);
-        mShadow = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.shadow, options);
-        mFlame1 = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.flame1, options);
-        mFlame2 = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.flame2, options);
-        mFlame3 = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.flame3, options);
-        mFlame4 = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.flame4, options);
-        mFlame5 = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.flame5, options);
-
-        Drawable drawable = getContext().getResources().getDrawable(R.drawable.bubble);
-        mBubble = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(mBubble);
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas);
-    }
-
-    @Override
-    public void setPercent(float percent, boolean invalidate) {
-        setPercent(percent);
-        if (invalidate) setBounce(percent);
-    }
-
-    @Override
-    public void offsetTopAndBottom(int offset) {
-        mTop += offset;
-        invalidateSelf();
-    }
-
-
-    @Override
-    public void draw(Canvas canvas) {
-
-        if (mScreenWidth <= 0) return;
-
-        final int saveCount = canvas.save();
-
-        canvas.translate(0, 0);
-        canvas.clipRect(0, -mParent.getTotalDragDistance(), mScreenWidth, mParent.getTotalDragDistance());
-        drawCircle(canvas);
-        drawShadow(canvas);
-        drawPan(canvas);
-        drawPotato(canvas);
-        drawCarrot(canvas);
-        drawRightPea(canvas);
-        drawLeftPea(canvas);
-        drawCover(canvas);
-        drawWater(canvas);
-        drawFlame1(canvas);
-        drawFlame2(canvas);
-        drawFlame3(canvas);
-        drawFlame5(canvas);
-        drawFlame4(canvas);
-        drawBubble(canvas);
-        drawBubble2(canvas);
-        drawBubble3(canvas);
-        drawBubble4(canvas);
-        drawBubble5(canvas);
-        drawBubble6(canvas);
-
-        canvas.restoreToCount(saveCount);
-    }
-
-
-    private void drawCover(Canvas canvas) {
-        Matrix matrix = mMatrix;
-        matrix.reset();
-        float offsetX;
-        float offsetY;
-
-        if (isRefreshing) {
-            offsetX = (mScreenWidth / 2) - (mCover.getWidth() / 2);
-            offsetY = ((((mBounce * mCoverFinalPointY) - mCoverStartPointY) * ((mBounce * mCoverFinalPointY) - mCoverStartPointY)) / mCoverOffset);
-            isCoverDroped = true;
-            if (isShadowDisplayed) {
-                matrix.postRotate(-5,0, 0);
-            }
-            matrix.postRotate(mCoverJump * 5, 0, 0);
-            matrix.postTranslate(offsetX, offsetY);
-            Paint paint = new Paint();
-            float alpha = (mBounce / 2) * 500;
-            paint.setAlpha((int) alpha);
-            canvas.drawBitmap(mCover, matrix, paint);
-        }
-    }
-
-    private void drawPan(Canvas canvas) {
-        Matrix matrix = mMatrix;
-        matrix.reset();
-        float dragPercent = Math.min(1f, Math.abs(mPercent));
-        float offsetY;
-        float offsetX = (mScreenWidth / 2) - (mPan.getWidth() / 2);
-        offsetY = mPanTopOffset * dragPercent;
-        matrix.postTranslate(offsetX, offsetY);
-
-        Paint paint = new Paint();
-        float alpha = (dragPercent / 2) * 500;
-        paint.setAlpha((int) alpha);
-        canvas.drawBitmap(mPan, matrix, paint);
-    }
-
-    private void drawCircle(Canvas canvas) {
-        Matrix matrix = mMatrix;
-        matrix.reset();
-
-        float dragPercent = Math.min(0.85f, Math.abs(mPercent));
-
-        float offsetX = (mScreenWidth / 2) - (mCircle.getWidth() / 2);
-        float offsetY = (mScreenHeight / 100) * -1f;
-        matrix.postScale(dragPercent, dragPercent, Utils.convertDpToPixel(getContext(), 100), Utils.convertDpToPixel(getContext(), 40));
-        matrix.postTranslate(offsetX, offsetY);
-        Paint paint = new Paint();
-        float alpha = (dragPercent / 2) * 500;
-        paint.setAlpha((int) alpha);
-        canvas.drawBitmap(mCircle, matrix, paint);
-    }
-
-
-    private void drawPotato(Canvas canvas) {
-        Matrix matrix = mMatrix;
-        matrix.reset();
-        float dragPercent = Math.min(1f, Math.abs(mPercent));
-
-        float offsetX;
-        float offsetY;
-
-        offsetX = -(dragPercent * mPotatoFinalPointX) + mPotatoStartPointX;
-        offsetY = (((dragPercent * mPotatoFinalPointY) - mPotatoStartPointY) * ((dragPercent * mPotatoFinalPointY) - mPotatoStartPointY)) / mPotatoOffset;
-        if (isRefreshing) {
-            float bouncePercent = Math.min(1f, Math.abs(mBounce));
-            offsetY = (offsetY) + Utils.convertDpToFloatPixel(getContext(), 25) * bouncePercent;
-        }
-
-        matrix.postTranslate(offsetX, offsetY);
-
-        Paint paint = new Paint();
-        float alpha = (dragPercent / 2) * 500;
-        paint.setAlpha((int) alpha);
-        canvas.drawBitmap(mPotato, matrix, paint);
-    }
-
-
-    private void drawCarrot(Canvas canvas) {
-        Matrix matrix = mMatrix;
-        matrix.reset();
-        float dragPercent = Math.min(1f, Math.abs(mPercent));
-
-        float offsetX;
-        float offsetY;
-
-        offsetX = -(dragPercent * mCarrotFinalPointX) + mCarrotStartPointX;
-        offsetY = (((dragPercent * mCarrotFinalPointY) - mCarrotStartPointY) * ((dragPercent * mCarrotFinalPointY) - mCarrotStartPointY)) / mCarrotOffset;
-
-        if (isRefreshing) {
-            float bouncePercent = Math.min(1f, Math.abs(mBounce));
-            offsetY = (offsetY) + Utils.convertDpToFloatPixel(getContext(), 25) * bouncePercent;
-            matrix.postRotate(bouncePercent * (-30));
-        }
-
-
-        matrix.postRotate(dragPercent * (-330));
-        matrix.postTranslate(offsetX, offsetY);
-        Paint paint = new Paint();
-        float alpha = (dragPercent / 2) * 500;
-        paint.setAlpha((int) alpha);
-        canvas.drawBitmap(mCarrot, matrix, paint);
-    }
-
-    private void drawRightPea(Canvas canvas) {
-        Matrix matrix = mMatrix;
-        matrix.reset();
-        float dragPercent = Math.min(1f, Math.abs(mPercent));
-
-        float offsetX;
-        float offsetY;
-
-        offsetX = -(dragPercent * mRightPeaFinalPointX) + mRightPeaStartPointX;
-        offsetY = (((dragPercent * mRightPeaFinalPointY) - mRightPeaStartPointY) * ((dragPercent * mRightPeaFinalPointY) - mRightPeaStartPointY)) / mRightPeaOffset;
-
-        if (isRefreshing) {
-            float bouncePercent = Math.min(1f, Math.abs(mBounce));
-            offsetY = (offsetY) + Utils.convertDpToFloatPixel(getContext(), 25) * bouncePercent;
-        }
-
-        matrix.postTranslate(offsetX, offsetY);
-        Paint paint = new Paint();
-        float alpha = (dragPercent / 2) * 500;
-        paint.setAlpha((int) alpha);
-        canvas.drawBitmap(mRightPea, matrix, paint);
-    }
-
-    private void drawLeftPea(Canvas canvas) {
-        Matrix matrix = mMatrix;
-        matrix.reset();
-        float dragPercent = Math.min(1f, Math.abs(mPercent));
-
-        float offsetX;
-        float offsetY;
-
-        offsetX = -(dragPercent * mLeftPeaFinalPointX) + mLeftPeaStartPointX;
-        offsetY = (((dragPercent * mLeftPeaFinalPointY) - mLeftPeaStartPointY) * ((dragPercent * mLeftPeaFinalPointY) - mLeftPeaStartPointY)) / mLeftPeaOffset;
-
-        if (isRefreshing) {
-            float bouncePercent = Math.min(1f, Math.abs(mBounce));
-            offsetY = (offsetY) + Utils.convertDpToFloatPixel(getContext(), 25) * bouncePercent;
-        }
-
-
-        matrix.postTranslate(offsetX, offsetY);
-
-        Paint paint = new Paint();
-        float alpha = (dragPercent / 2) * 500;
-        paint.setAlpha((int) alpha);
-        canvas.drawBitmap(mLeftPea, matrix, paint);
-    }
-
-    private void drawWater(final Canvas canvas) {
-        final Matrix matrix = mMatrix;
-        matrix.reset();
-
-        float dragPercent = Math.min(1f, Math.abs(mPercent));
-        final float offsetX = (mScreenWidth / 2) - (mWater.getWidth() / 2);
-        final float offsetY = (mPanTopOffset * dragPercent) + Utils.convertDpToFloatPixel(getContext(), 10);
-        if (isCoverDroped) {
-            matrix.postScale(1, mScale, Utils.convertDpToPixel(getContext(), 48), Utils.convertDpToPixel(getContext(), 60));
-            matrix.postTranslate(offsetX, offsetY);
-            Paint paint = new Paint();
-            canvas.drawBitmap(mWater, matrix, paint);
-        }
-    }
-
-    private void drawFlame1(final Canvas canvas) {
-        final Matrix matrix = mMatrix;
-        matrix.reset();
-
-        final float offsetX = mFlame1LeftOffset;
-        final float offsetY = mFlame1TopOffset;
-        if (isShadowDisplayed) {
-            matrix.postTranslate(offsetX, offsetY);
-            matrix.postScale(Math.max(mFlameMinScale, mFlameScale), Math.max(mFlameMinScale, mFlameScale), mFlame4LeftOffset - Utils.convertDpToFloatPixel(getContext(), 15), mFlame4TopOffset + 50);
-            Paint paint = new Paint();
-            float alpha = (Math.max(0.5f, mFlameScale)) * 255;
-            paint.setAlpha((int) alpha);
-            canvas.drawBitmap(mFlame1, matrix, paint);
-        }
-    }
-
-    private void drawFlame2(final Canvas canvas) {
-        final Matrix matrix = mMatrix;
-        matrix.reset();
-
-        final float offsetX = mFlame2LeftOffset;
-        final float offsetY = mFlame1TopOffset;
-        if (isShadowDisplayed) {
-            matrix.postTranslate(offsetX, offsetY);
-            matrix.postScale(Math.max(mFlameMinScale, mFlameBurn), Math.max(mFlameMinScale, mFlameBurn), mFlame2LeftOffset + Utils.convertDpToFloatPixel(getContext(), 10), mFlame1TopOffset + 50);
-            Paint paint = new Paint();
-            float alpha = (Math.max(0.5f, mFlameBurn)) * 255;
-            paint.setAlpha((int) alpha);
-            canvas.drawBitmap(mFlame2, matrix, paint);
-        }
-    }
-
-    private void drawFlame3(final Canvas canvas) {
-        final Matrix matrix = mMatrix;
-        matrix.reset();
-
-        final float offsetX = mFlame3LeftOffset;
-        final float offsetY = mFlame3TopOffset;
-        if (isShadowDisplayed) {
-            matrix.postTranslate(offsetX, offsetY);
-            matrix.postScale(Math.max(mFlameMinScale, mFlameScale), Math.max(mFlameMinScale, mFlameScale), mFlame3LeftOffset - Utils.convertDpToFloatPixel(getContext(), 11), mFlame3TopOffset + 50);
-            Paint paint = new Paint();
-            float alpha = (Math.max(0.5f, mFlameScale)) * 255;
-            paint.setAlpha((int) alpha);
-            canvas.drawBitmap(mFlame3, matrix, paint);
-        }
-    }
-
-    private void drawFlame4(final Canvas canvas) {
-        final Matrix matrix = mMatrix;
-        matrix.reset();
-
-        final float offsetX = mFlame4LeftOffset;
-        final float offsetY = mFlame4TopOffset;
-        if (isShadowDisplayed) {
-            matrix.postTranslate(offsetX, offsetY);
-            matrix.postScale(Math.max(mFlameMinScale, mFlameBurn), Math.max(mFlameMinScale, mFlameBurn), mFlame4LeftOffset, mFlame4TopOffset + 50);
-            Paint paint = new Paint();
-            float alpha = (Math.max(0.5f, mFlameBurn)) * 255;
-            paint.setAlpha((int) alpha);
-            canvas.drawBitmap(mFlame4, matrix, paint);
-        }
-    }
-
-    private void drawFlame5(final Canvas canvas) {
-        final Matrix matrix = mMatrix;
-        matrix.reset();
-
-        final float offsetX = mFlame5LeftOffset;
-        final float offsetY = mFlame5TopOffset;
-        if (isShadowDisplayed) {
-            matrix.postTranslate(offsetX, offsetY);
-            matrix.postScale(Math.max(mFlameMinScale, mFlameScale), Math.max(mFlameMinScale, mFlameScale), mFlame5LeftOffset, mFlame5TopOffset + 50);
-            Paint paint = new Paint();
-            float alpha = (Math.max(0.5f, mFlameScale)) * 255;
-            paint.setAlpha((int) alpha);
-            canvas.drawBitmap(mFlame5, matrix, paint);
-        }
-    }
-
-
-    private void drawShadow(final Canvas canvas) {
-        final Matrix matrix = mMatrix;
-        matrix.reset();
-
-        float dragPercent = Math.min(1f, Math.abs(mPercent));
-        final float offsetX = (mScreenWidth / 2) - (mShadow.getWidth() / 2) + Utils.convertDpToFloatPixel(getContext(), 17f);
-        if (isCoverDroped) {
-            final float offsetY = mPanTopOffset * dragPercent;
-            matrix.postTranslate(offsetX, offsetY);
-            Paint paint = new Paint();
-            float alpha = (mBounce / 2) * 500;
-            paint.setAlpha((int) alpha);
-            canvas.drawBitmap(mShadow, matrix, paint);
-        }
-    }
-
-    private void drawBubble(final Canvas canvas) {
-        final Matrix matrix = mMatrix;
-        matrix.reset();
-
-        final float offsetX = mBubble1LeftOffset;
-        float offsetY = (mBubble1TopOffset - mBubbleScaleOffset) - mBubbleScaleOffset * mBubble1Move;
-        if (isShadowDisplayed) {
-            if (mBubble1Move < 0.48) {
-                matrix.postScale(mBubble1Move, mBubble1Move, mBubble1LeftOffset - Utils.convertDpToFloatPixel(getContext(), 140), mBubble1TopOffset);
-                matrix.postTranslate(offsetX, offsetY);
-                Paint paint = new Paint();
-                canvas.drawBitmap(mBubble, matrix, paint);
-            }
-        }
-    }
-
-
-    private void drawBubble2(final Canvas canvas) {
-        final Matrix matrix = mMatrix;
-        matrix.reset();
-
-        final float offsetX = mBubble2LeftOffset;
-        float offsetY = (mBubble2TopOffset - mBubbleScaleOffset) - mBubbleScaleOffset * mBubble2Move;
-        if (isShadowDisplayed) {
-            if (mBubble2Move < 0.48) {
-                matrix.postScale(mBubble2Move, mBubble2Move, mBubble2LeftOffset - Utils.convertDpToFloatPixel(getContext(), 140), mBubble2TopOffset);
-                matrix.postTranslate(offsetX, offsetY);
-                Paint paint = new Paint();
-                canvas.drawBitmap(mBubble, matrix, paint);
-            }
-        }
-    }
-
-    private void drawBubble3(final Canvas canvas) {
-        final Matrix matrix = mMatrix;
-        matrix.reset();
-
-        final float offsetX = mBubble3LeftOffset;
-        float offsetY = (mBubble3TopOffset - mBubbleScaleOffset) - mBubbleScaleOffset * mBubble3Move;
-        if (isShadowDisplayed) {
-            if (mBubble3Move < 0.48) {
-                matrix.postScale(mBubble3Move, mBubble3Move, mBubble3LeftOffset - Utils.convertDpToFloatPixel(getContext(), 140), mBubble3TopOffset);
-                matrix.postTranslate(offsetX, offsetY);
-                Paint paint = new Paint();
-                canvas.drawBitmap(mBubble, matrix, paint);
-            }
-        }
-    }
-
-    private void drawBubble4(final Canvas canvas) {
-        final Matrix matrix = mMatrix;
-        matrix.reset();
-
-        final float offsetX = mBubble4LeftOffset;
-        float offsetY = (mBubble4TopOffset - mBubbleScaleOffset) - mBubbleScaleOffset * mBubble4Move;
-        if (isShadowDisplayed) {
-            if (mBubble4Move < 0.48) {
-                matrix.postScale(mBubble4Move, mBubble4Move, mBubble4LeftOffset - Utils.convertDpToFloatPixel(getContext(), 140), mBubble4TopOffset);
-                matrix.postTranslate(offsetX, offsetY);
-                Paint paint = new Paint();
-                canvas.drawBitmap(mBubble, matrix, paint);
-            }
-        }
-    }
-
-    private void drawBubble5(final Canvas canvas) {
-        final Matrix matrix = mMatrix;
-        matrix.reset();
-
-        final float offsetX = mBubble5LeftOffset;
-        float offsetY = (mBubble5TopOffset - mBubbleScaleOffset) - mBubbleScaleOffset * mBubble5Move;
-        if (isShadowDisplayed) {
-            if (mBubble5Move < 0.48) {
-                matrix.postScale(mBubble5Move, mBubble5Move, mBubble5LeftOffset - Utils.convertDpToFloatPixel(getContext(), 140), mBubble5TopOffset);
-                matrix.postTranslate(offsetX, offsetY);
-                Paint paint = new Paint();
-                canvas.drawBitmap(mBubble, matrix, paint);
-            }
-        }
-    }
-
-    private void drawBubble6(final Canvas canvas) {
-        final Matrix matrix = mMatrix;
-        matrix.reset();
-
-        final float offsetX = mBubble6LeftOffset;
-        float offsetY = (mBubble6TopOffset - mBubbleScaleOffset) - mBubbleScaleOffset * mBubble6Move;
-        if (isShadowDisplayed) {
-            if (mBubble6Move < 0.48) {
-                matrix.postScale(mBubble6Move, mBubble6Move, mBubble6LeftOffset - Utils.convertDpToFloatPixel(getContext(), 140), mBubble6TopOffset);
-                matrix.postTranslate(offsetX, offsetY);
-                Paint paint = new Paint();
-                canvas.drawBitmap(mBubble, matrix, paint);
-            }
-        }
-    }
-
-    public void setPercent(float percent) {
-        mPercent = percent;
-    }
-
-    public void setBounce(float rotate) {
-
-        mBounce = rotate;
-        invalidateSelf();
-    }
-
-    public void setScale(float scale) {
-
-        mScale = scale;
-        invalidateSelf();
-    }
-
-    public void setFlameScale(float scale) {
-
-        mFlameScale = scale;
-        invalidateSelf();
-    }
-
-    public void setBubble1Move(float bubbleMove) {
-        mBubble1Move = bubbleMove;
-        invalidateSelf();
-    }
-
-    public void setBubble2Move(float bubbleMove) {
-        mBubble2Move = bubbleMove;
-        invalidateSelf();
-    }
-
-    public void setBubble3Move(float bubbleMove) {
-        mBubble3Move = bubbleMove;
-        invalidateSelf();
-    }
-
-    public void setBubble4Move(float bubbleMove) {
-        mBubble4Move = bubbleMove;
-        invalidateSelf();
-    }
-
-    public void setBubble5Move(float bubbleMove) {
-        mBubble5Move = bubbleMove;
-        invalidateSelf();
-    }
-
-    public void setBubble6Move(float bubbleMove) {
-        mBubble6Move = bubbleMove;
-        invalidateSelf();
-    }
-
-    public void setCoverJump(float coverJump) {
-        mCoverJump = coverJump;
-        invalidateSelf();
-    }
-
-    public void resetOriginals() {
-        setPercent(0);
-        setBounce(0);
-        setScale(0);
-        setBubble1Move(0);
-        setBubble2Move(0);
-        setBubble3Move(0);
-        setBubble4Move(0);
-        setBubble5Move(0);
-        setBubble6Move(0);
-        setFlameScale(0);
-        setCoverJump(0);
-    }
-
-    @Override
-    protected void onBoundsChange(Rect bounds) {
-        super.onBoundsChange(bounds);
     }
 
     @Override
@@ -865,152 +372,448 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
     public void stop() {
         mParent.clearAnimation();
         isRefreshing = false;
-        isCoverDroped = false;
+        isCoverDropped = false;
         isShadowDisplayed = false;
         resetOriginals();
     }
 
+    @Override
+    public void setPercent(float percent, boolean invalidate) {
+        setPercent(percent);
+        if (invalidate) setBounce(percent);
+    }
+
+    @Override
+    public void offsetTopAndBottom(int offset) {
+        invalidateSelf();
+    }
+
+
+    @Override
+    public void draw(Canvas canvas) {
+
+        if (mScreenWidth <= 0) return;
+
+        final int saveCount = canvas.save();
+
+        canvas.translate(0, 0);
+        canvas.clipRect(0, -mParent.getTotalDragDistance(), mScreenWidth, mParent.getTotalDragDistance());
+        drawCircle(canvas);
+        drawShadow(canvas);
+        drawPan(canvas);
+        drawPotato(canvas);
+        drawCarrot(canvas);
+        drawRightPea(canvas);
+        drawLeftPea(canvas);
+        drawCover(canvas);
+        drawWater(canvas);
+        drawFlame(canvas, mFlame1, mFlame1LeftOffset, mFlame1TopOffset, mFlameScale, mFlame4LeftOffset - Utils.convertDpToFloatPixel(mContext, 15), mFlame4TopOffset + 50);
+        drawFlame(canvas, mFlame2, mFlame2LeftOffset, mFlame1TopOffset, mFlameBurn, mFlame2LeftOffset + Utils.convertDpToFloatPixel(mContext, 10), mFlame1TopOffset + 50);
+        drawFlame(canvas, mFlame3, mFlame3LeftOffset, mFlame3TopOffset, mFlameScale, mFlame3LeftOffset - Utils.convertDpToFloatPixel(mContext, 11), mFlame3TopOffset + 50);
+        drawFlame(canvas, mFlame4, mFlame4LeftOffset, mFlame4TopOffset, mFlameBurn, mFlame4LeftOffset, mFlame4TopOffset + 50);
+        drawFlame(canvas, mFlame5, mFlame5LeftOffset, mFlame5TopOffset, mFlameScale, mFlame5LeftOffset, mFlame5TopOffset + 50);
+
+        drawBubble(canvas, mBubble, mBubble1LeftOffset, mBubble1TopOffset, mBubble1Move, mBubble1PivotX);
+        drawBubble(canvas, mBubble, mBubble2LeftOffset, mBubble2TopOffset, mBubble2Move, mBubble2PivotX);
+        drawBubble(canvas, mBubble, mBubble3LeftOffset, mBubble3TopOffset, mBubble3Move, mBubble3PivotX);
+        drawBubble(canvas, mBubble, mBubble4LeftOffset, mBubble4TopOffset, mBubble4Move, mBubble4PivotX);
+        drawBubble(canvas, mBubble, mBubble5LeftOffset, mBubble5TopOffset, mBubble5Move, mBubble5PivotX);
+        drawBubble(canvas, mBubble, mBubble6LeftOffset, mBubble6TopOffset, mBubble6Move, mBubble6PivotX);
+
+        canvas.restoreToCount(saveCount);
+    }
+
+
+    private void drawCover(Canvas canvas) {
+        Matrix matrix = mMatrix;
+        matrix.reset();
+        float offsetX;
+        float offsetY;
+
+        if (isRefreshing) {
+            offsetX = (mScreenWidth / 2) - (mCover.getWidth() / 2);
+            offsetY = ((((mBounce * mCoverFinalPointY) - mCoverStartPointY) * ((mBounce * mCoverFinalPointY) - mCoverStartPointY)) / mCoverOffset);
+            isCoverDropped = true;
+            if (isShadowDisplayed) {
+                matrix.postRotate(-5, 0, 0);
+            }
+            matrix.postRotate(mCoverJump * 5, 0, 0);
+            matrix.postTranslate(offsetX, offsetY);
+            Paint paint = new Paint();
+            float alpha = (mBounce / 2) * 500;
+            paint.setAlpha((int) alpha);
+            canvas.drawBitmap(mCover, matrix, paint);
+        }
+    }
+
+    private void drawPan(Canvas canvas) {
+        Matrix matrix = mMatrix;
+        matrix.reset();
+        float dragPercent = Math.min(1f, Math.abs(mPercent));
+        float offsetY;
+        float offsetX = (mScreenWidth / 2) - (mPan.getWidth() / 2);
+        offsetY = mPanTopOffset * dragPercent;
+        matrix.postTranslate(offsetX, offsetY);
+
+        Paint paint = new Paint();
+        float alpha = (dragPercent / 2) * 500;
+        paint.setAlpha((int) alpha);
+        canvas.drawBitmap(mPan, matrix, paint);
+    }
+
+    private void drawCircle(Canvas canvas) {
+        Matrix matrix = mMatrix;
+        matrix.reset();
+
+        float dragPercent = Math.min(0.85f, Math.abs(mPercent));
+
+        float offsetX = (mScreenWidth / 2) - (mCircle.getWidth() / 2);
+        float offsetY = -(mScreenHeight / 100);
+
+        matrix.postScale(dragPercent, dragPercent, mCirclePivotX, mCirclePivotY);
+        matrix.postTranslate(offsetX, offsetY);
+
+        Paint paint = new Paint();
+        float alpha = (dragPercent / 2) * 500;
+        paint.setAlpha((int) alpha);
+
+        canvas.drawBitmap(mCircle, matrix, paint);
+    }
+
+
+    private void drawPotato(Canvas canvas) {
+        Matrix matrix = mMatrix;
+        matrix.reset();
+        float dragPercent = Math.min(1f, Math.abs(mPercent));
+
+        float offsetX;
+        float offsetY;
+
+        offsetX = -(dragPercent * mPotatoFinalPointX) + mPotatoStartPointX;
+        offsetY = (((dragPercent * mPotatoFinalPointY) - mPotatoStartPointY) * ((dragPercent * mPotatoFinalPointY) - mPotatoStartPointY)) / mPotatoOffset;
+        if (isRefreshing) {
+            float bouncePercent = Math.min(1f, Math.abs(mBounce));
+            offsetY = (offsetY) + Utils.convertDpToFloatPixel(mContext, 25) * bouncePercent;
+        }
+
+        matrix.postTranslate(offsetX, offsetY);
+
+        Paint paint = new Paint();
+        float alpha = (dragPercent / 2) * 500;
+        paint.setAlpha((int) alpha);
+        canvas.drawBitmap(mPotato, matrix, paint);
+    }
+
+
+    private void drawCarrot(Canvas canvas) {
+        Matrix matrix = mMatrix;
+        matrix.reset();
+        float dragPercent = Math.min(1f, Math.abs(mPercent));
+
+        float offsetX;
+        float offsetY;
+
+        offsetX = -(dragPercent * mCarrotFinalPointX) + mCarrotStartPointX;
+        offsetY = (((dragPercent * mCarrotFinalPointY) - mCarrotStartPointY) * ((dragPercent * mCarrotFinalPointY) - mCarrotStartPointY)) / mCarrotOffset;
+
+        if (isRefreshing) {
+            float bouncePercent = Math.min(1f, Math.abs(mBounce));
+            offsetY = (offsetY) + Utils.convertDpToFloatPixel(mContext, 25) * bouncePercent;
+            matrix.postRotate(bouncePercent * (-30));
+        }
+
+
+        matrix.postRotate(dragPercent * (-330));
+        matrix.postTranslate(offsetX, offsetY);
+        Paint paint = new Paint();
+        float alpha = (dragPercent / 2) * 500;
+        paint.setAlpha((int) alpha);
+        canvas.drawBitmap(mCarrot, matrix, paint);
+    }
+
+    private void drawRightPea(Canvas canvas) {
+        Matrix matrix = mMatrix;
+        matrix.reset();
+        float dragPercent = Math.min(1f, Math.abs(mPercent));
+
+        float offsetX;
+        float offsetY;
+
+        offsetX = -(dragPercent * mRightPeaFinalPointX) + mRightPeaStartPointX;
+        offsetY = (((dragPercent * mRightPeaFinalPointY) - mRightPeaStartPointY) * ((dragPercent * mRightPeaFinalPointY) - mRightPeaStartPointY)) / mRightPeaOffset;
+
+        if (isRefreshing) {
+            float bouncePercent = Math.min(1f, Math.abs(mBounce));
+            offsetY = (offsetY) + Utils.convertDpToFloatPixel(mContext, 25) * bouncePercent;
+        }
+
+        matrix.postTranslate(offsetX, offsetY);
+        Paint paint = new Paint();
+        float alpha = (dragPercent / 2) * 500;
+        paint.setAlpha((int) alpha);
+        canvas.drawBitmap(mRightPea, matrix, paint);
+    }
+
+    private void drawLeftPea(Canvas canvas) {
+        Matrix matrix = mMatrix;
+        matrix.reset();
+        float dragPercent = Math.min(1f, Math.abs(mPercent));
+
+        float offsetX;
+        float offsetY;
+
+        offsetX = -(dragPercent * mLeftPeaFinalPointX) + mLeftPeaStartPointX;
+        offsetY = (((dragPercent * mLeftPeaFinalPointY) - mLeftPeaStartPointY) * ((dragPercent * mLeftPeaFinalPointY) - mLeftPeaStartPointY)) / mLeftPeaOffset;
+
+        if (isRefreshing) {
+            float bouncePercent = Math.min(1f, Math.abs(mBounce));
+            offsetY = (offsetY) + Utils.convertDpToFloatPixel(mContext, 25) * bouncePercent;
+        }
+
+
+        matrix.postTranslate(offsetX, offsetY);
+
+        Paint paint = new Paint();
+        float alpha = (dragPercent / 2) * 500;
+        paint.setAlpha((int) alpha);
+        canvas.drawBitmap(mLeftPea, matrix, paint);
+    }
+
+    private void drawWater(final Canvas canvas) {
+        final Matrix matrix = mMatrix;
+        matrix.reset();
+
+        float dragPercent = Math.min(1f, Math.abs(mPercent));
+        final float offsetX = (mScreenWidth / 2) - (mWater.getWidth() / 2);
+        final float offsetY = (mPanTopOffset * dragPercent) + Utils.convertDpToFloatPixel(mContext, 10);
+        if (isCoverDropped) {
+            matrix.postScale(1, mScale, Utils.convertDpToPixel(mContext, 48), Utils.convertDpToPixel(mContext, 60));
+            matrix.postTranslate(offsetX, offsetY);
+            Paint paint = new Paint();
+            canvas.drawBitmap(mWater, matrix, paint);
+        }
+    }
+
+    private void drawFlame(final Canvas canvas, Bitmap bitmap, float flameOffsetX, float flameOffsetY, float scaleY, float pivotX, float pivotY) {
+        final Matrix matrix = mMatrix;
+        matrix.reset();
+
+        if (isShadowDisplayed) {
+            matrix.postTranslate(flameOffsetX, flameOffsetY);
+            matrix.postScale(Math.max(mFlameMinScale, scaleY), Math.max(mFlameMinScale, scaleY), pivotX, pivotY);
+            Paint paint = new Paint();
+            float alpha = (Math.max(0.5f, mFlameScale)) * 255;
+            paint.setAlpha((int) alpha);
+            canvas.drawBitmap(bitmap, matrix, paint);
+        }
+    }
+
+
+    private void drawShadow(final Canvas canvas) {
+        final Matrix matrix = mMatrix;
+        matrix.reset();
+
+        float dragPercent = Math.min(1f, Math.abs(mPercent));
+        final float offsetX = (mScreenWidth / 2) - (mShadow.getWidth() / 2) + Utils.convertDpToFloatPixel(mContext, 17f);
+        if (isCoverDropped) {
+            final float offsetY = mPanTopOffset * dragPercent;
+            matrix.postTranslate(offsetX, offsetY);
+            Paint paint = new Paint();
+            float alpha = (mBounce / 2) * 500;
+            paint.setAlpha((int) alpha);
+            canvas.drawBitmap(mShadow, matrix, paint);
+        }
+    }
+
+
+    private void drawBubble(final Canvas canvas, Bitmap bitmap, float bubbleOffsetX, float bubbleOffsetY, float move, float pivotX) {
+        final Matrix matrix = mMatrix;
+        matrix.reset();
+
+        float offsetY = (bubbleOffsetY - mBubbleScaleOffset) - mBubbleScaleOffset * move;
+        if (isShadowDisplayed) {
+            if (move < 0.48) {
+                matrix.postScale(move, move, pivotX, bubbleOffsetY);
+                matrix.postTranslate(bubbleOffsetX, offsetY);
+                Paint paint = new Paint();
+                canvas.drawBitmap(bitmap, matrix, paint);
+            }
+        }
+    }
+
+    private void setPercent(float percent) {
+        mPercent = percent;
+    }
+
+    private void setBounce(float rotate) {
+
+        mBounce = rotate;
+        invalidateSelf();
+    }
+
+    private void setScale(float scale) {
+
+        mScale = scale;
+        invalidateSelf();
+    }
+
+    private void setFlameScale(float scale) {
+
+        mFlameScale = scale;
+        invalidateSelf();
+    }
+
+    private void setBubble1Move(float bubbleMove) {
+        mBubble1Move = bubbleMove;
+        invalidateSelf();
+    }
+
+    private void setBubble2Move(float bubbleMove) {
+        mBubble2Move = bubbleMove;
+        invalidateSelf();
+    }
+
+    private void setBubble3Move(float bubbleMove) {
+        mBubble3Move = bubbleMove;
+        invalidateSelf();
+    }
+
+    private void setBubble4Move(float bubbleMove) {
+        mBubble4Move = bubbleMove;
+        invalidateSelf();
+    }
+
+    private void setBubble5Move(float bubbleMove) {
+        mBubble5Move = bubbleMove;
+        invalidateSelf();
+    }
+
+    private void setBubble6Move(float bubbleMove) {
+        mBubble6Move = bubbleMove;
+        invalidateSelf();
+    }
+
+    private void setCoverJump(float coverJump) {
+        mCoverJump = coverJump;
+        invalidateSelf();
+    }
+
+    private void resetOriginals() {
+        setPercent(0);
+        setBounce(0);
+        setScale(0);
+        setBubble1Move(0);
+        setBubble2Move(0);
+        setBubble3Move(0);
+        setBubble4Move(0);
+        setBubble5Move(0);
+        setBubble6Move(0);
+        setFlameScale(0);
+        setCoverJump(0);
+    }
+
 
     private void setupAnimations() {
-
-        mBounceAnimation = new Animation() {
+        AnimationFactory animationFactory = new AnimationFactory();
+        mBounceAnimation = animationFactory.getBounce(new Animation() {
             @Override
             public void applyTransformation(float interpolatedTime, Transformation t) {
                 t.setTransformationType(Transformation.TYPE_BOTH);
                 setBounce(interpolatedTime);
             }
 
-        };
-        mBounceAnimation.setInterpolator(BOUNCE_INTERPOLATOR);
-        mBounceAnimation.setDuration(ANIMATION_DURATION);
-        mScaleAnimation = new Animation() {
+        });
+
+        mScaleAnimation = animationFactory.getScale(new Animation() {
 
             @Override
             public void applyTransformation(float interpolatedTime, Transformation t) {
                 setScale(interpolatedTime);
             }
-        };
-        mScaleAnimation.setInterpolator(ACELERATE_INTERPOLATOR);
-        mScaleAnimation.setDuration(ANIMATION_SCALE_DURATION);
+        });
 
-        mFlameScaleAnimation = new Animation() {
+
+        mFlameScaleAnimation = animationFactory.getFlameScale(new Animation() {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
                 setFlameScale(interpolatedTime);
             }
-        };
-        mFlameScaleAnimation.setInterpolator(DECELERATE_INTERPOLATOR);
-        mFlameScaleAnimation.setDuration(ANIMATION_FLAME_SCALE_DURATION);
+        });
 
-        mFlameBurnAnimation = new Animation() {
+
+        mFlameBurnAnimation = animationFactory.getFlameBurn(new Animation() {
 
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
                 mFlameBurn = 1f - interpolatedTime;
                 setFlameScale(interpolatedTime);
             }
-        };
-        mFlameBurnAnimation.setInterpolator(DECELERATE_INTERPOLATOR);
-        mFlameBurnAnimation.setDuration(ANIMATION_FLAME_BURN_DURATION);
-        mFlameBurnAnimation.setRepeatMode(Animation.REVERSE);
-        mFlameBurnAnimation.setRepeatCount(Animation.INFINITE);
+        });
 
-        mBubble1Animation = new Animation() {
+
+        mBubble1Animation = animationFactory.getBubble(new Animation() {
 
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
                 setBubble1Move(interpolatedTime);
 
             }
-        };
-        mBubble1Animation.setInterpolator(DECELERATE_INTERPOLATOR);
-        mBubble1Animation.setDuration(ANIMATION_BUBBLE_DURATION);
-        mBubble1Animation.setRepeatMode(Animation.RESTART);
-        mBubble1Animation.setRepeatCount(Animation.INFINITE);
+        }, 0);
 
-        mBubble2Animation = new Animation() {
+        mBubble2Animation = animationFactory.getBubble(new Animation() {
 
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
                 setBubble2Move(interpolatedTime);
 
             }
-        };
-        mBubble2Animation.setInterpolator(DECELERATE_INTERPOLATOR);
-        mBubble2Animation.setDuration(ANIMATION_BUBBLE_DURATION);
-        mBubble2Animation.setStartOffset(ANIMATION_BUBBLE1_OFFSET);
-        mBubble2Animation.setRepeatMode(Animation.RESTART);
-        mBubble2Animation.setRepeatCount(Animation.INFINITE);
+        }, ANIMATION_BUBBLE1_OFFSET);
 
-        mBubble3Animation = new Animation() {
+        mBubble3Animation = animationFactory.getBubble(new Animation() {
 
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
                 setBubble3Move(interpolatedTime);
 
             }
-        };
-        mBubble3Animation.setInterpolator(DECELERATE_INTERPOLATOR);
-        mBubble3Animation.setDuration(ANIMATION_BUBBLE_DURATION);
-        mBubble3Animation.setStartOffset(ANIMATION_BUBBLE2_OFFSET);
-        mBubble3Animation.setRepeatMode(Animation.RESTART);
-        mBubble3Animation.setRepeatCount(Animation.INFINITE);
+        }, ANIMATION_BUBBLE2_OFFSET);
 
-        mBubble4Animation = new Animation() {
+        mBubble4Animation = animationFactory.getBubble(new Animation() {
 
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
                 setBubble4Move(interpolatedTime);
 
             }
-        };
-        mBubble4Animation.setInterpolator(DECELERATE_INTERPOLATOR);
-        mBubble4Animation.setDuration(ANIMATION_BUBBLE_DURATION);
-        mBubble4Animation.setStartOffset(ANIMATION_BUBBLE3_OFFSET);
-        mBubble4Animation.setRepeatMode(Animation.RESTART);
-        mBubble4Animation.setRepeatCount(Animation.INFINITE);
+        }, ANIMATION_BUBBLE3_OFFSET);
 
-        mBubble5Animation = new Animation() {
+        mBubble5Animation = animationFactory.getBubble(new Animation() {
 
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
                 setBubble5Move(interpolatedTime);
 
             }
-        };
-        mBubble5Animation.setInterpolator(DECELERATE_INTERPOLATOR);
-        mBubble5Animation.setDuration(ANIMATION_BUBBLE_DURATION);
-        mBubble5Animation.setStartOffset(ANIMATION_BUBBLE4_OFFSET);
-        mBubble5Animation.setRepeatMode(Animation.RESTART);
-        mBubble5Animation.setRepeatCount(Animation.INFINITE);
+        }, ANIMATION_BUBBLE4_OFFSET);
 
-        mBubble6Animation = new Animation() {
+        mBubble6Animation = animationFactory.getBubble(new Animation() {
 
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
                 setBubble6Move(interpolatedTime);
 
             }
-        };
-        mBubble6Animation.setInterpolator(DECELERATE_INTERPOLATOR);
-        mBubble6Animation.setDuration(ANIMATION_BUBBLE_DURATION);
-        mBubble6Animation.setStartOffset(ANIMATION_BUBBLE5_OFFSET);
-        mBubble6Animation.setRepeatMode(Animation.RESTART);
-        mBubble6Animation.setRepeatCount(Animation.INFINITE);
+        }, ANIMATION_BUBBLE5_OFFSET);
 
-        mCoverAnimation = new Animation() {
+        mCoverAnimation = animationFactory.getCover(new Animation() {
 
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
                 setCoverJump(interpolatedTime);
 
             }
-        };
-        mCoverAnimation.setInterpolator(BOUNCE_INTERPOLATOR);
-        mCoverAnimation.setDuration(ANIMATION_COVER_DURATION);
-        mCoverAnimation.setStartOffset(ANIMATION_COVER_OFFSET);
-        mCoverAnimation.setRepeatMode(Animation.REVERSE);
-        mCoverAnimation.setRepeatCount(Animation.INFINITE);
+        });
+
     }
 
 
