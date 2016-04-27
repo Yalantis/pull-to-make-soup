@@ -8,30 +8,28 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
 import android.support.v4.content.res.ResourcesCompat;
 
-import com.yalantis.pulltomakesoup.R;
-
 /**
  * Created by Alexey on 21.04.2016.
  */
 public class CreateBitmapFactory {
 
-    private Context mContext;
-    private BitmapFactory.Options mOptions;
 
-    public CreateBitmapFactory(Context context) {
-        mContext = context;
+    private static BitmapFactory.Options mOptions;
+
+    {
         mOptions = new BitmapFactory.Options();
         mOptions.inPreferredConfig = Bitmap.Config.RGB_565;
     }
 
-    Bitmap getBitmapFromImage(@DrawableRes int id){
-      return   BitmapFactory.decodeResource(mContext.getResources(), id, mOptions);
+
+    static Bitmap getBitmapFromImage(@DrawableRes int id, Context context) {
+        return BitmapFactory.decodeResource(context.getResources(), id, mOptions);
     }
 
-    Bitmap getBitmapFromDrawable(@DrawableRes int id){
+    static Bitmap getBitmapFromDrawable(@DrawableRes int id, Context context) {
         Bitmap bitmap;
-        Drawable drawable = ResourcesCompat.getDrawable(mContext.getResources(),id, mContext.getTheme());
-        if(drawable == null){
+        Drawable drawable = ResourcesCompat.getDrawable(context.getResources(), id, context.getTheme());
+        if (drawable == null) {
             return null;
         }
         bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);

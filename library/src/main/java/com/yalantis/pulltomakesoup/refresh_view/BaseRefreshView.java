@@ -12,7 +12,7 @@ import com.yalantis.pulltomakesoup.PullToRefreshView;
 /**
  * Created by Alexey on 28.01.2016.
  */
-public abstract class BaseRefreshView extends Drawable implements Drawable.Callback, Animatable {
+public abstract class BaseRefreshView extends Drawable implements Drawable.Callback {
 
     private final PullToRefreshView mRefreshLayout;
 

@@ -75,7 +75,6 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
     private float mScale;
     private float mFlameScale;
     private float mFlameBurn;
-    private final float mFlameMinScale = 0.9f;
     private float mBubble1Move;
     private float mBubble2Move;
     private float mBubble3Move;
@@ -256,32 +255,28 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
         mCirclePivotX = Utils.convertDpToPixel(mContext, 100);
         mCirclePivotY = Utils.convertDpToPixel(mContext, 40);
 
-        mBubble2PivotX = mBubble2LeftOffset - Utils.convertDpToFloatPixel(mContext, 140);
-        mBubble1PivotX = mBubble1LeftOffset - Utils.convertDpToFloatPixel(mContext, 140);
-        mBubble3PivotX = mBubble3LeftOffset - Utils.convertDpToFloatPixel(mContext, 140);
-        mBubble4PivotX = mBubble4LeftOffset - Utils.convertDpToFloatPixel(mContext, 140);
-        mBubble5PivotX = mBubble5LeftOffset - Utils.convertDpToFloatPixel(mContext, 140);
-        mBubble6PivotX = mBubble6LeftOffset - Utils.convertDpToFloatPixel(mContext, 140);
+        setBubblesPivot(140);
 
     }
 
+
     private void createBitmaps() {
-        CreateBitmapFactory createBitmapFactory = new CreateBitmapFactory(mContext);
-        mPan = createBitmapFactory.getBitmapFromImage(R.drawable.pan);
-        mCircle = createBitmapFactory.getBitmapFromImage(R.drawable.circle);
-        mPotato = createBitmapFactory.getBitmapFromImage(R.drawable.potato);
-        mCarrot = createBitmapFactory.getBitmapFromImage(R.drawable.carrot);
-        mRightPea = createBitmapFactory.getBitmapFromImage(R.drawable.pea);
-        mLeftPea = createBitmapFactory.getBitmapFromImage(R.drawable.pea);
-        mCover = createBitmapFactory.getBitmapFromImage(R.drawable.pan_cover);
-        mWater = createBitmapFactory.getBitmapFromImage(R.drawable.water);
-        mShadow = createBitmapFactory.getBitmapFromImage(R.drawable.shadow);
-        mFlame1 = createBitmapFactory.getBitmapFromImage(R.drawable.flame1);
-        mFlame2 = createBitmapFactory.getBitmapFromImage(R.drawable.flame2);
-        mFlame3 = createBitmapFactory.getBitmapFromImage(R.drawable.flame3);
-        mFlame4 = createBitmapFactory.getBitmapFromImage(R.drawable.flame4);
-        mFlame5 = createBitmapFactory.getBitmapFromImage(R.drawable.flame5);
-        mBubble = createBitmapFactory.getBitmapFromDrawable(R.drawable.bubble);
+
+        mPan = CreateBitmapFactory.getBitmapFromImage(R.drawable.pan, mContext);
+        mCircle = CreateBitmapFactory.getBitmapFromImage(R.drawable.circle, mContext);
+        mPotato = CreateBitmapFactory.getBitmapFromImage(R.drawable.potato, mContext);
+        mCarrot = CreateBitmapFactory.getBitmapFromImage(R.drawable.carrot, mContext);
+        mRightPea = CreateBitmapFactory.getBitmapFromImage(R.drawable.pea, mContext);
+        mLeftPea = CreateBitmapFactory.getBitmapFromImage(R.drawable.pea, mContext);
+        mCover = CreateBitmapFactory.getBitmapFromImage(R.drawable.pan_cover, mContext);
+        mWater = CreateBitmapFactory.getBitmapFromImage(R.drawable.water, mContext);
+        mShadow = CreateBitmapFactory.getBitmapFromImage(R.drawable.shadow, mContext);
+        mFlame1 = CreateBitmapFactory.getBitmapFromImage(R.drawable.flame1, mContext);
+        mFlame2 = CreateBitmapFactory.getBitmapFromImage(R.drawable.flame2, mContext);
+        mFlame3 = CreateBitmapFactory.getBitmapFromImage(R.drawable.flame3, mContext);
+        mFlame4 = CreateBitmapFactory.getBitmapFromImage(R.drawable.flame4, mContext);
+        mFlame5 = CreateBitmapFactory.getBitmapFromImage(R.drawable.flame5, mContext);
+        mBubble = CreateBitmapFactory.getBitmapFromDrawable(R.drawable.bubble, mContext);
 
     }
 
@@ -388,7 +383,6 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
         invalidateSelf();
     }
 
-
     @Override
     public void draw(Canvas canvas) {
 
@@ -413,16 +407,15 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
         drawFlame(canvas, mFlame4, mFlame4LeftOffset, mFlame4TopOffset, mFlameBurn, mFlame4LeftOffset, mFlame4TopOffset + 50);
         drawFlame(canvas, mFlame5, mFlame5LeftOffset, mFlame5TopOffset, mFlameScale, mFlame5LeftOffset, mFlame5TopOffset + 50);
 
-        drawBubble(canvas, mBubble, mBubble1LeftOffset, mBubble1TopOffset, mBubble1Move, mBubble1PivotX);
-        drawBubble(canvas, mBubble, mBubble2LeftOffset, mBubble2TopOffset, mBubble2Move, mBubble2PivotX);
-        drawBubble(canvas, mBubble, mBubble3LeftOffset, mBubble3TopOffset, mBubble3Move, mBubble3PivotX);
-        drawBubble(canvas, mBubble, mBubble4LeftOffset, mBubble4TopOffset, mBubble4Move, mBubble4PivotX);
-        drawBubble(canvas, mBubble, mBubble5LeftOffset, mBubble5TopOffset, mBubble5Move, mBubble5PivotX);
-        drawBubble(canvas, mBubble, mBubble6LeftOffset, mBubble6TopOffset, mBubble6Move, mBubble6PivotX);
+        drawBubble(canvas, mBubble1LeftOffset, mBubble1TopOffset, mBubble1Move, mBubble1PivotX);
+        drawBubble(canvas, mBubble2LeftOffset, mBubble2TopOffset, mBubble2Move, mBubble2PivotX);
+        drawBubble(canvas, mBubble3LeftOffset, mBubble3TopOffset, mBubble3Move, mBubble3PivotX);
+        drawBubble(canvas, mBubble4LeftOffset, mBubble4TopOffset, mBubble4Move, mBubble4PivotX);
+        drawBubble(canvas, mBubble5LeftOffset, mBubble5TopOffset, mBubble5Move, mBubble5PivotX);
+        drawBubble(canvas, mBubble6LeftOffset, mBubble6TopOffset, mBubble6Move, mBubble6PivotX);
 
         canvas.restoreToCount(saveCount);
     }
-
 
     private void drawCover(Canvas canvas) {
         Matrix matrix = mMatrix;
@@ -480,7 +473,6 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
         canvas.drawBitmap(mCircle, matrix, paint);
     }
 
-
     private void drawPotato(Canvas canvas) {
         Matrix matrix = mMatrix;
         matrix.reset();
@@ -503,7 +495,6 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
         paint.setAlpha((int) alpha);
         canvas.drawBitmap(mPotato, matrix, paint);
     }
-
 
     private void drawCarrot(Canvas canvas) {
         Matrix matrix = mMatrix;
@@ -600,14 +591,14 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
 
         if (isShadowDisplayed) {
             matrix.postTranslate(flameOffsetX, flameOffsetY);
-            matrix.postScale(Math.max(mFlameMinScale, scaleY), Math.max(mFlameMinScale, scaleY), pivotX, pivotY);
+            float flameMinScale = 0.9f;
+            matrix.postScale(Math.max(flameMinScale, scaleY), Math.max(flameMinScale, scaleY), pivotX, pivotY);
             Paint paint = new Paint();
             float alpha = (Math.max(0.5f, mFlameScale)) * 255;
             paint.setAlpha((int) alpha);
             canvas.drawBitmap(bitmap, matrix, paint);
         }
     }
-
 
     private void drawShadow(final Canvas canvas) {
         final Matrix matrix = mMatrix;
@@ -625,8 +616,7 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
         }
     }
 
-
-    private void drawBubble(final Canvas canvas, Bitmap bitmap, float bubbleOffsetX, float bubbleOffsetY, float move, float pivotX) {
+    private void drawBubble(final Canvas canvas, float bubbleOffsetX, float bubbleOffsetY, float move, float pivotX) {
         final Matrix matrix = mMatrix;
         matrix.reset();
 
@@ -636,7 +626,7 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
                 matrix.postScale(move, move, pivotX, bubbleOffsetY);
                 matrix.postTranslate(bubbleOffsetX, offsetY);
                 Paint paint = new Paint();
-                canvas.drawBitmap(bitmap, matrix, paint);
+                canvas.drawBitmap(mBubble, matrix, paint);
             }
         }
     }
@@ -698,6 +688,18 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
         invalidateSelf();
     }
 
+    /**
+     * @param dp The offset of pivot to make bubbles move straight upward, while scaling.
+     */
+    private void setBubblesPivot(float dp) {
+        mBubble1PivotX = mBubble1LeftOffset - Utils.convertDpToFloatPixel(mContext, dp);
+        mBubble2PivotX = mBubble2LeftOffset - Utils.convertDpToFloatPixel(mContext, dp);
+        mBubble3PivotX = mBubble3LeftOffset - Utils.convertDpToFloatPixel(mContext, dp);
+        mBubble4PivotX = mBubble4LeftOffset - Utils.convertDpToFloatPixel(mContext, dp);
+        mBubble5PivotX = mBubble5LeftOffset - Utils.convertDpToFloatPixel(mContext, dp);
+        mBubble6PivotX = mBubble6LeftOffset - Utils.convertDpToFloatPixel(mContext, dp);
+    }
+
     private void resetOriginals() {
         setPercent(0);
         setBounce(0);
@@ -711,7 +713,6 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
         setFlameScale(0);
         setCoverJump(0);
     }
-
 
     private void setupAnimations() {
         AnimationFactory animationFactory = new AnimationFactory();
