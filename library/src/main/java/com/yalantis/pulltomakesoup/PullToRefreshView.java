@@ -17,7 +17,6 @@ import android.view.animation.Transformation;
 import android.widget.AbsListView;
 import android.widget.ImageView;
 
-import com.yalantis.pulltomakesoup.refresh_view.BaseRefreshView;
 import com.yalantis.pulltomakesoup.refresh_view.SoupRefreshView;
 import com.yalantis.pulltomakesoup.utils.Utils;
 
@@ -40,7 +39,7 @@ public class PullToRefreshView extends ViewGroup {
     private final Interpolator mDecelerateInterpolator;
     private final int mTouchSlop;
     private final int mTotalDragDistance;
-    private BaseRefreshView mBaseRefreshView;
+    private SoupRefreshView mSoupRefreshView;
     private float mCurrentDragPercent;
     private int mCurrentOffsetTop;
     private boolean mRefreshing;
@@ -58,7 +57,7 @@ public class PullToRefreshView extends ViewGroup {
             int offset = targetTop - mTarget.getTop();
 
             mCurrentDragPercent = mFromDragPercent - (mFromDragPercent - 1.0f) * interpolatedTime;
-            mBaseRefreshView.setPercent(mCurrentDragPercent, false);
+            mSoupRefreshView.setPercent(mCurrentDragPercent, false);
 
             setTargetOffsetTop(offset, false /* requires update */);
         }
@@ -86,7 +85,7 @@ public class PullToRefreshView extends ViewGroup {
 
         @Override
         public void onAnimationEnd(Animation animation) {
-            mBaseRefreshView.stop();
+            mSoupRefreshView.stop();
             mCurrentOffsetTop = mTarget.getTop();
         }
     };
@@ -116,13 +115,13 @@ public class PullToRefreshView extends ViewGroup {
         setRefreshing(false);
         switch (type) {
             case STYLE_SOUP:
-                mBaseRefreshView = new SoupRefreshView(this);
+                mSoupRefreshView = new SoupRefreshView(this);
                 break;
             default:
                 throw new InvalidParameterException("Type does not exist");
         }
 
-        mRefreshView.setImageDrawable(mBaseRefreshView);
+        mRefreshView.setImageDrawable(mSoupRefreshView);
     }
 
     public int getTotalDragDistance() {
@@ -232,7 +231,7 @@ public class PullToRefreshView extends ViewGroup {
                 float extraMove = (slingshotDist) * tensionPercent / 2;
                 int targetY = (int) ((slingshotDist * boundedDragPercent) + extraMove);
 
-                mBaseRefreshView.setPercent(mCurrentDragPercent, true);
+                mSoupRefreshView.setPercent(mCurrentDragPercent, true);
                 setTargetOffsetTop(targetY - mCurrentOffsetTop, true);
                 break;
             }
@@ -291,14 +290,14 @@ public class PullToRefreshView extends ViewGroup {
         mRefreshView.startAnimation(mAnimateToCorrectPosition);
 
         if (mRefreshing) {
-            mBaseRefreshView.start();
+            mSoupRefreshView.start();
             if (mNotify) {
                 if (mListener != null) {
                     mListener.onRefresh();
                 }
             }
         } else {
-            mBaseRefreshView.stop();
+            mSoupRefreshView.stop();
             animateOffsetToStartPosition();
         }
         mCurrentOffsetTop = mTarget.getTop();
@@ -311,7 +310,7 @@ public class PullToRefreshView extends ViewGroup {
         int offset = targetTop - mTarget.getTop();
 
         mCurrentDragPercent = targetPercent;
-        mBaseRefreshView.setPercent(mCurrentDragPercent, true);
+        mSoupRefreshView.setPercent(mCurrentDragPercent, true);
         mTarget.setPadding(mTargetPaddingLeft, mTargetPaddingTop, mTargetPaddingRight, mTargetPaddingBottom + targetTop);
         setTargetOffsetTop(offset, false);
     }
@@ -328,7 +327,7 @@ public class PullToRefreshView extends ViewGroup {
             ensureTarget();
             mRefreshing = refreshing;
             if (mRefreshing) {
-                mBaseRefreshView.setPercent(1f, true);
+                mSoupRefreshView.setPercent(1f, true);
                 animateOffsetToCorrectPosition();
             } else {
                 animateOffsetToStartPosition();
@@ -355,7 +354,7 @@ public class PullToRefreshView extends ViewGroup {
 
     private void setTargetOffsetTop(int offset, boolean requiresUpdate) {
         mTarget.offsetTopAndBottom(offset);
-        mBaseRefreshView.offsetTopAndBottom(offset);
+        mSoupRefreshView.offsetTopAndBottom(offset);
         mCurrentOffsetTop = mTarget.getTop();
         if (requiresUpdate && android.os.Build.VERSION.SDK_INT < 11) {
             invalidate();

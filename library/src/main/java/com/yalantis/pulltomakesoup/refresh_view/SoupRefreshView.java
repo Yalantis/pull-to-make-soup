@@ -3,9 +3,13 @@ package com.yalantis.pulltomakesoup.refresh_view;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.ColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.Transformation;
@@ -17,7 +21,7 @@ import com.yalantis.pulltomakesoup.utils.Utils;
 /**
  * Created by Alexey on 28.01.2016.
  */
-public class SoupRefreshView extends BaseRefreshView implements Animatable {
+public class SoupRefreshView extends Drawable implements Animatable, Drawable.Callback {
 
     private final PullToRefreshView mParent;
     private final Matrix mMatrix;
@@ -81,8 +85,8 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
     private float mBubble4Move;
     private float mBubble5Move;
     private float mBubble6Move;
-    private final Context mContext = getContext();
-    private final float mBubbleScaleOffset = Utils.convertDpToFloatPixel(mContext, 100);
+    private Context mContext = getContext();
+    private float mBubbleScaleOffset;
     private float mCoverJump;
 
 
@@ -160,9 +164,9 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
 
 
     public SoupRefreshView(final PullToRefreshView layout) {
-        super(layout);
         mParent = layout;
         mMatrix = new Matrix();
+        mContext = layout.getContext();
         setupAnimations();
         layout.post(new Runnable() {
             @Override
@@ -254,6 +258,8 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
 
         mCirclePivotX = Utils.convertDpToPixel(mContext, 100);
         mCirclePivotY = Utils.convertDpToPixel(mContext, 40);
+
+        mBubbleScaleOffset = Utils.convertDpToFloatPixel(mContext, 100);
 
         setBubblesPivot(140);
 
@@ -372,13 +378,13 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
         resetOriginals();
     }
 
-    @Override
+
     public void setPercent(float percent, boolean invalidate) {
         setPercent(percent);
-        if (invalidate) setBounce(percent);
+        if (invalidate)   mBounce = setVariable(percent);
     }
 
-    @Override
+
     public void offsetTopAndBottom(int offset) {
         invalidateSelf();
     }
@@ -415,6 +421,50 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
         drawBubble(canvas, mBubble6LeftOffset, mBubble6TopOffset, mBubble6Move, mBubble6PivotX);
 
         canvas.restoreToCount(saveCount);
+    }
+
+    Context getContext() {
+        return mParent != null ? mParent.getContext() : null;
+
+    }
+
+    @Override
+    public void invalidateDrawable(@NonNull Drawable who) {
+        final Callback callback = getCallback();
+        if (callback != null) {
+            callback.invalidateDrawable(this);
+        }
+    }
+
+    @Override
+    public void scheduleDrawable(Drawable who, Runnable what, long when) {
+        final Callback callback = getCallback();
+        if (callback != null) {
+            callback.scheduleDrawable(this, what, when);
+        }
+    }
+
+    @Override
+    public void unscheduleDrawable(Drawable who, Runnable what) {
+        final Callback callback = getCallback();
+        if (callback != null) {
+            callback.unscheduleDrawable(this, what);
+        }
+    }
+
+    @Override
+    public int getOpacity() {
+        return PixelFormat.TRANSLUCENT;
+    }
+
+    //No need for implementation,we don't need this method.
+    @Override
+    public void setAlpha(int alpha) {
+    }
+
+    //No need for implementation,we don't need this method.
+    @Override
+    public void setColorFilter(ColorFilter cf) {
     }
 
     private void drawCover(Canvas canvas) {
@@ -635,57 +685,9 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
         mPercent = percent;
     }
 
-    private void setBounce(float rotate) {
-
-        mBounce = rotate;
+    private float setVariable(float value) {
         invalidateSelf();
-    }
-
-    private void setScale(float scale) {
-
-        mScale = scale;
-        invalidateSelf();
-    }
-
-    private void setFlameScale(float scale) {
-
-        mFlameScale = scale;
-        invalidateSelf();
-    }
-
-    private void setBubble1Move(float bubbleMove) {
-        mBubble1Move = bubbleMove;
-        invalidateSelf();
-    }
-
-    private void setBubble2Move(float bubbleMove) {
-        mBubble2Move = bubbleMove;
-        invalidateSelf();
-    }
-
-    private void setBubble3Move(float bubbleMove) {
-        mBubble3Move = bubbleMove;
-        invalidateSelf();
-    }
-
-    private void setBubble4Move(float bubbleMove) {
-        mBubble4Move = bubbleMove;
-        invalidateSelf();
-    }
-
-    private void setBubble5Move(float bubbleMove) {
-        mBubble5Move = bubbleMove;
-        invalidateSelf();
-    }
-
-    private void setBubble6Move(float bubbleMove) {
-        mBubble6Move = bubbleMove;
-        invalidateSelf();
-    }
-
-    private void setCoverJump(float coverJump) {
-        mCoverJump = coverJump;
-        invalidateSelf();
+        return value;
     }
 
     /**
@@ -702,16 +704,16 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
 
     private void resetOriginals() {
         setPercent(0);
-        setBounce(0);
-        setScale(0);
-        setBubble1Move(0);
-        setBubble2Move(0);
-        setBubble3Move(0);
-        setBubble4Move(0);
-        setBubble5Move(0);
-        setBubble6Move(0);
-        setFlameScale(0);
-        setCoverJump(0);
+        mBounce = setVariable(0);
+        mScale = setVariable(0);
+        mBubble1Move = setVariable(0);
+        mBubble2Move = setVariable(0);
+        mBubble3Move = setVariable(0);
+        mBubble4Move = setVariable(0);
+        mBubble5Move = setVariable(0);
+        mBubble6Move = setVariable(0);
+        mFlameScale = setVariable(0);
+        mCoverJump = setVariable(0);
     }
 
     private void setupAnimations() {
@@ -720,7 +722,7 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
             @Override
             public void applyTransformation(float interpolatedTime, Transformation t) {
                 t.setTransformationType(Transformation.TYPE_BOTH);
-                setBounce(interpolatedTime);
+                mBounce = setVariable(interpolatedTime);
             }
 
         });
@@ -729,7 +731,7 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
 
             @Override
             public void applyTransformation(float interpolatedTime, Transformation t) {
-                setScale(interpolatedTime);
+                mScale = setVariable(interpolatedTime);
             }
         });
 
@@ -737,7 +739,7 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
         mFlameScaleAnimation = animationFactory.getFlameScale(new Animation() {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
-                setFlameScale(interpolatedTime);
+                mFlameScale = setVariable(interpolatedTime);
             }
         });
 
@@ -746,8 +748,8 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
 
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
-                mFlameBurn = 1f - interpolatedTime;
-                setFlameScale(interpolatedTime);
+                mFlameBurn = setVariable(1f - interpolatedTime);
+                mFlameScale = setVariable(interpolatedTime);
             }
         });
 
@@ -756,7 +758,7 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
 
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
-                setBubble1Move(interpolatedTime);
+                mBubble1Move = setVariable(interpolatedTime);
 
             }
         }, 0);
@@ -765,7 +767,7 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
 
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
-                setBubble2Move(interpolatedTime);
+                mBubble2Move = setVariable(interpolatedTime);
 
             }
         }, ANIMATION_BUBBLE1_OFFSET);
@@ -774,7 +776,7 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
 
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
-                setBubble3Move(interpolatedTime);
+                mBubble3Move = setVariable(interpolatedTime);
 
             }
         }, ANIMATION_BUBBLE2_OFFSET);
@@ -783,7 +785,7 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
 
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
-                setBubble4Move(interpolatedTime);
+                mBubble4Move = setVariable(interpolatedTime);
 
             }
         }, ANIMATION_BUBBLE3_OFFSET);
@@ -792,7 +794,7 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
 
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
-                setBubble5Move(interpolatedTime);
+                mBubble5Move = setVariable(interpolatedTime);
 
             }
         }, ANIMATION_BUBBLE4_OFFSET);
@@ -801,7 +803,7 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
 
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
-                setBubble6Move(interpolatedTime);
+                mBubble6Move = setVariable(interpolatedTime);
 
             }
         }, ANIMATION_BUBBLE5_OFFSET);
@@ -810,7 +812,7 @@ public class SoupRefreshView extends BaseRefreshView implements Animatable {
 
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
-                setCoverJump(interpolatedTime);
+                mCoverJump = setVariable(interpolatedTime);
 
             }
         });
