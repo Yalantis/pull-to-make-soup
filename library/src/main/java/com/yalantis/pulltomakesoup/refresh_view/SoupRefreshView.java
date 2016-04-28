@@ -293,7 +293,7 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
 
     @Override
     public boolean isRunning() {
-        return false;
+        return isRefreshing;
     }
 
     @Override
