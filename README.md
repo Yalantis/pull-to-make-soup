@@ -16,6 +16,9 @@ Inspired by [this project on dribble](https://dribbble.com/shots/2074667-Recipe-
 Min SDK version 16
 
 ##Installing with [Gradle](http://gradle.org/)
+```groovy
+compile 'com.yalantis:pulltomakesoup:1.0'
+
 
 ##Usage
 
