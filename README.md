@@ -18,7 +18,7 @@ Min SDK version 16
 ##Installing with [Gradle](http://gradle.org/)
 ```groovy
 compile 'com.yalantis:pulltomakesoup:1.0'
-
+```
 
 ##Usage
 
