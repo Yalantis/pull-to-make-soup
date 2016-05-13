@@ -4,7 +4,6 @@ Custom animated pull-to-refresh that can be easily added to RecyclerView
 
 [![Yalantis](https://raw.githubusercontent.com/Yalantis/PullToMakeSoup/master/PullToMakeSoupDemo/Resouces/badge_dark.png)](https://yalantis.com/?utm_source=github)
 
-Check this [article on our blog]() to know more details about animations implementation
 
 Inspired by [this project on dribble](https://dribbble.com/shots/2074667-Recipe-Finder-v-2)
 
