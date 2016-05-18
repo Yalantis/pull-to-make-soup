@@ -4,6 +4,8 @@ Custom animated pull-to-refresh that can be easily added to RecyclerView
 
 [![Yalantis](https://raw.githubusercontent.com/Yalantis/PullToMakeSoup/master/PullToMakeSoupDemo/Resouces/badge_dark.png)](https://yalantis.com/?utm_source=github)
 
+[![Android Gems](http://www.android-gems.com/badge/Yalantis/pull-to-make-soup.svg?branch=master)](http://www.android-gems.com/lib/Yalantis/pull-to-make-soup)
+
 
 Inspired by [this project on dribble](https://dribbble.com/shots/2074667-Recipe-Finder-v-2)
 
