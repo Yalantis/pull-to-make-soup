@@ -6,6 +6,8 @@ Custom animated pull-to-refresh that can be easily added to RecyclerView
 
 [![Android Gems](http://www.android-gems.com/badge/Yalantis/pull-to-make-soup.svg?branch=master)](http://www.android-gems.com/lib/Yalantis/pull-to-make-soup)
 
+[![Android Arsenal](https://img.shields.io/badge/Android%20pull-to-make-soup.svg?style=flat)](https://android-arsenal.com/details/1/3588)
+
 
 Inspired by [this project on dribble](https://dribbble.com/shots/2074667-Recipe-Finder-v-2)
 
