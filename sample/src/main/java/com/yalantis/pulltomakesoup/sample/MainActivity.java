@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         public void bindData(Map<String, Integer> data) {
             mData = data;
 
-            mRootView.setBackgroundResource(mData.get(KEY_COLOR));
+           // mRootView.setBackgroundResource(mData.get(KEY_COLOR));
             mImageViewIcon.setImageResource(mData.get(KEY_ICON));
         }
     }
