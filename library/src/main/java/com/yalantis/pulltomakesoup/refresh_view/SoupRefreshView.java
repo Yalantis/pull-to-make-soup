@@ -505,7 +505,7 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
         if (mParent.isRefreshing()) {
             offsetY = ((((mBounce * mCoverFinalPointY) - mCoverStartPointY) * ((mBounce * mCoverFinalPointY) - mCoverStartPointY)) / mCoverOffset);
             isCoverDropped = true;
-            alpha = mBounce * 250;
+            alpha = mBounce * MAX_ALPHA;
         } else {
             offsetY = (mCoverFinalPointY * mPercent) - Utils.convertDpToFloatPixel(mContext, 25);
             isCoverDropped = false;
@@ -513,7 +513,7 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
         offsetX = (mScreenWidth / 2) - (mCover.getWidth() / 2);
         if (isShadowDisplayed) {
             matrix.postRotate(-5, 0, 0);
-            alpha = mPercent * 250;
+            alpha = mPercent * MAX_ALPHA;
         }
         matrix.postRotate(mCoverJump * 5, 0, 0);
         matrix.postTranslate(offsetX, offsetY);
@@ -531,7 +531,7 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
         matrix.postTranslate(offsetX, offsetY);
 
         Paint paint = new Paint();
-        float alpha = (dragPercent / 2) * 500;
+        float alpha = dragPercent * MAX_ALPHA;
         paint.setAlpha((int) alpha);
         canvas.drawBitmap(mPan, matrix, paint);
     }
@@ -549,7 +549,7 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
         matrix.postTranslate(offsetX, offsetY);
 
         Paint paint = new Paint();
-        float alpha = (dragPercent / 2) * 500;
+        float alpha = dragPercent * MAX_ALPHA;
         paint.setAlpha((int) alpha);
 
         canvas.drawBitmap(mCircle, matrix, paint);
