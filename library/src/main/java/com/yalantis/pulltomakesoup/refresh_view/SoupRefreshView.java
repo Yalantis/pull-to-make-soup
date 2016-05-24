@@ -25,6 +25,7 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
 
     private final PullToRefreshView mParent;
     private final Matrix mMatrix;
+    private final int MAX_ALPHA = 250;
     private Animation mBounceAnimation;
     private Animation mScaleAnimation;
     private Animation mFlameScaleAnimation;
@@ -406,7 +407,9 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
 
     public void setPercent(float percent, boolean invalidate) {
         setPercent(percent);
-        if (invalidate) mBounce = setVariable(percent);
+        if (invalidate) {
+            mBounce = setVariable(percent);
+        }
     }
 
 
@@ -570,7 +573,7 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
         matrix.postTranslate(offsetX, offsetY);
 
         Paint paint = new Paint();
-        float alpha = (dragPercent / 2) * 500;
+        float alpha = dragPercent * MAX_ALPHA;
         paint.setAlpha((int) alpha);
         canvas.drawBitmap(mPotato, matrix, paint);
     }
@@ -596,7 +599,7 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
         matrix.postRotate(dragPercent * (-330));
         matrix.postTranslate(offsetX, offsetY);
         Paint paint = new Paint();
-        float alpha = (dragPercent / 2) * 500;
+        float alpha = dragPercent * MAX_ALPHA;
         paint.setAlpha((int) alpha);
         canvas.drawBitmap(mCarrot, matrix, paint);
     }
@@ -619,7 +622,7 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
 
         matrix.postTranslate(offsetX, offsetY);
         Paint paint = new Paint();
-        float alpha = (dragPercent / 2) * 500;
+        float alpha = dragPercent * MAX_ALPHA;
         paint.setAlpha((int) alpha);
         canvas.drawBitmap(mRightPea, matrix, paint);
     }
@@ -644,7 +647,7 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
         matrix.postTranslate(offsetX, offsetY);
 
         Paint paint = new Paint();
-        float alpha = (dragPercent / 2) * 500;
+        float alpha = dragPercent * MAX_ALPHA;
         paint.setAlpha((int) alpha);
         canvas.drawBitmap(mLeftPea, matrix, paint);
     }
@@ -699,7 +702,7 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
             final float offsetY = mPanTopOffset * dragPercent;
             matrix.postTranslate(offsetX, offsetY);
             Paint paint = new Paint();
-            float alpha = (mBounce / 2) * 500;
+            float alpha = mBounce  * MAX_ALPHA;
             paint.setAlpha((int) alpha);
             canvas.drawBitmap(mShadow, matrix, paint);
         }
