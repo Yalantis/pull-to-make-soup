@@ -25,6 +25,7 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
 
     private final PullToRefreshView mParent;
     private final Matrix mMatrix;
+    private final int MAX_ALPHA = 250;
     private Animation mBounceAnimation;
     private Animation mScaleAnimation;
     private Animation mFlameScaleAnimation;
@@ -36,6 +37,8 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
     private Animation mBubble5Animation;
     private Animation mBubble6Animation;
     private Animation mCoverAnimation;
+    private Animation mFlamesHideAnimation;
+    private Animation mCoverHideAnimation;
 
     private static final int ANIMATION_BUBBLE1_OFFSET = 200;
     private static final int ANIMATION_BUBBLE2_OFFSET = 300;
@@ -304,6 +307,8 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
         mFlameBurnAnimation.reset();
         mBubble1Animation.reset();
         mCoverAnimation.reset();
+        mFlamesHideAnimation.reset();
+
         isRefreshing = true;
 
         final AnimationSet animatorSet = new AnimationSet(false);
@@ -316,6 +321,9 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
         animatorSet.addAnimation(mBubble6Animation);
         animatorSet.addAnimation(mCoverAnimation);
         mParent.startAnimation(mBounceAnimation);
+        final AnimationSet animatorSetEnding = new AnimationSet(false);
+        animatorSetEnding.addAnimation(mFlamesHideAnimation);
+        animatorSetEnding.addAnimation(mBounceAnimation);
 
         mBounceAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -367,6 +375,24 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
             }
         });
 
+        mFlameBurnAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                if (!mParent.isRefreshing()) {
+                    mParent.startAnimation(mFlamesHideAnimation);
+                }
+            }
+        });
     }
 
     @Override
@@ -381,7 +407,9 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
 
     public void setPercent(float percent, boolean invalidate) {
         setPercent(percent);
-        if (invalidate)   mBounce = setVariable(percent);
+        if (invalidate) {
+            mBounce = setVariable(percent);
+        }
     }
 
 
@@ -472,21 +500,25 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
         matrix.reset();
         float offsetX;
         float offsetY;
-
-        if (isRefreshing) {
-            offsetX = (mScreenWidth / 2) - (mCover.getWidth() / 2);
+        float alpha = 0;
+        Paint paint = new Paint();
+        if (mParent.isRefreshing()) {
             offsetY = ((((mBounce * mCoverFinalPointY) - mCoverStartPointY) * ((mBounce * mCoverFinalPointY) - mCoverStartPointY)) / mCoverOffset);
             isCoverDropped = true;
-            if (isShadowDisplayed) {
-                matrix.postRotate(-5, 0, 0);
-            }
-            matrix.postRotate(mCoverJump * 5, 0, 0);
-            matrix.postTranslate(offsetX, offsetY);
-            Paint paint = new Paint();
-            float alpha = (mBounce / 2) * 500;
-            paint.setAlpha((int) alpha);
-            canvas.drawBitmap(mCover, matrix, paint);
+            alpha = mBounce * MAX_ALPHA;
+        } else {
+            offsetY = (mCoverFinalPointY * mPercent) - Utils.convertDpToFloatPixel(mContext, 25);
+            isCoverDropped = false;
         }
+        offsetX = (mScreenWidth / 2) - (mCover.getWidth() / 2);
+        if (isShadowDisplayed) {
+            matrix.postRotate(-5, 0, 0);
+            alpha = mPercent * MAX_ALPHA;
+        }
+        matrix.postRotate(mCoverJump * 5, 0, 0);
+        matrix.postTranslate(offsetX, offsetY);
+        paint.setAlpha((int) alpha);
+        canvas.drawBitmap(mCover, matrix, paint);
     }
 
     private void drawPan(Canvas canvas) {
@@ -499,7 +531,7 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
         matrix.postTranslate(offsetX, offsetY);
 
         Paint paint = new Paint();
-        float alpha = (dragPercent / 2) * 500;
+        float alpha = dragPercent * MAX_ALPHA;
         paint.setAlpha((int) alpha);
         canvas.drawBitmap(mPan, matrix, paint);
     }
@@ -517,7 +549,7 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
         matrix.postTranslate(offsetX, offsetY);
 
         Paint paint = new Paint();
-        float alpha = (dragPercent / 2) * 500;
+        float alpha = dragPercent * MAX_ALPHA;
         paint.setAlpha((int) alpha);
 
         canvas.drawBitmap(mCircle, matrix, paint);
@@ -541,7 +573,7 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
         matrix.postTranslate(offsetX, offsetY);
 
         Paint paint = new Paint();
-        float alpha = (dragPercent / 2) * 500;
+        float alpha = dragPercent * MAX_ALPHA;
         paint.setAlpha((int) alpha);
         canvas.drawBitmap(mPotato, matrix, paint);
     }
@@ -567,7 +599,7 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
         matrix.postRotate(dragPercent * (-330));
         matrix.postTranslate(offsetX, offsetY);
         Paint paint = new Paint();
-        float alpha = (dragPercent / 2) * 500;
+        float alpha = dragPercent * MAX_ALPHA;
         paint.setAlpha((int) alpha);
         canvas.drawBitmap(mCarrot, matrix, paint);
     }
@@ -590,7 +622,7 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
 
         matrix.postTranslate(offsetX, offsetY);
         Paint paint = new Paint();
-        float alpha = (dragPercent / 2) * 500;
+        float alpha = dragPercent * MAX_ALPHA;
         paint.setAlpha((int) alpha);
         canvas.drawBitmap(mRightPea, matrix, paint);
     }
@@ -615,7 +647,7 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
         matrix.postTranslate(offsetX, offsetY);
 
         Paint paint = new Paint();
-        float alpha = (dragPercent / 2) * 500;
+        float alpha = dragPercent * MAX_ALPHA;
         paint.setAlpha((int) alpha);
         canvas.drawBitmap(mLeftPea, matrix, paint);
     }
@@ -626,23 +658,33 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
 
         float dragPercent = Math.min(1f, Math.abs(mPercent));
         final float offsetX = (mScreenWidth / 2) - (mWater.getWidth() / 2);
+        float alpha;
         final float offsetY = (mPanTopOffset * dragPercent) + Utils.convertDpToFloatPixel(mContext, 10);
-        if (isCoverDropped) {
-            matrix.postScale(1, mScale, Utils.convertDpToPixel(mContext, 48), Utils.convertDpToPixel(mContext, 60));
-            matrix.postTranslate(offsetX, offsetY);
-            Paint paint = new Paint();
-            canvas.drawBitmap(mWater, matrix, paint);
-        }
+
+        matrix.postScale(1, mScale, Utils.convertDpToPixel(mContext, 48), Utils.convertDpToPixel(mContext, 60));
+        alpha = dragPercent * 250;
+        matrix.postTranslate(offsetX, offsetY);
+        Paint paint = new Paint();
+        paint.setAlpha((int) alpha);
+        canvas.drawBitmap(mWater, matrix, paint);
     }
 
     private void drawFlame(final Canvas canvas, Bitmap bitmap, float flameOffsetX, float flameOffsetY, float scaleY, float pivotX, float pivotY) {
         final Matrix matrix = mMatrix;
         matrix.reset();
-
         if (isShadowDisplayed) {
-            matrix.postTranslate(flameOffsetX, flameOffsetY);
+
             float flameMinScale = 0.9f;
-            matrix.postScale(Math.max(flameMinScale, scaleY), Math.max(flameMinScale, scaleY), pivotX, pivotY);
+
+            if (mParent.isRefreshing()) {
+                matrix.postTranslate(flameOffsetX, flameOffsetY);
+                matrix.postScale(Math.max(flameMinScale, scaleY), Math.max(flameMinScale, scaleY), pivotX, pivotY);
+            } else {
+                //moving flame with the pan, but under it
+                matrix.postTranslate(flameOffsetX, ((flameOffsetY - mPan.getHeight()) * mPercent) + mPan.getHeight());
+                int scalingOffset = Utils.convertDpToPixel(mContext, 7);
+                matrix.postScale(mFlameBurn, mFlameBurn, flameOffsetX+ scalingOffset, (flameOffsetY * mPercent) + mPan.getHeight());
+            }
             Paint paint = new Paint();
             float alpha = (Math.max(0.5f, mFlameScale)) * 255;
             paint.setAlpha((int) alpha);
@@ -660,7 +702,7 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
             final float offsetY = mPanTopOffset * dragPercent;
             matrix.postTranslate(offsetX, offsetY);
             Paint paint = new Paint();
-            float alpha = (mBounce / 2) * 500;
+            float alpha = mBounce  * MAX_ALPHA;
             paint.setAlpha((int) alpha);
             canvas.drawBitmap(mShadow, matrix, paint);
         }
@@ -817,11 +859,17 @@ public class SoupRefreshView extends Drawable implements Animatable, Drawable.Ca
             }
         });
 
+        mFlamesHideAnimation = animationFactory.getScale(new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                mFlameBurn = 1 - interpolatedTime;
+                mBounce = 1 - interpolatedTime;
+            }
+        });
+
     }
 
 
 }
-
-
 
 

@@ -128,6 +128,10 @@ public class PullToRefreshView extends ViewGroup {
         return mTotalDragDistance;
     }
 
+    public boolean isRefreshing() {
+        return mRefreshing;
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
