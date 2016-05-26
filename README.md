@@ -20,7 +20,7 @@ Min SDK version 16
 
 ##Installing with [Gradle](http://gradle.org/)
 ```groovy
-compile 'com.yalantis:pulltomakesoup:1.0'
+compile 'com.yalantis:pulltomakesoup:1.0.1'
 ```
 
 ##Usage
@@ -75,6 +75,10 @@ If you need to change progress state:
 ### Version: 1.0
 
   * Initial Build
+ 
+### Version: 1.0.1
+
+  * Fixed disapearing animation (Flames,cover and water now disapearing properly).
 
 #### Let us know!
 
