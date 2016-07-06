@@ -184,7 +184,14 @@ public class PullToRefreshView extends ViewGroup {
                 mInitialMotionY = initialMotionY;
                 break;
             case MotionEvent.ACTION_MOVE:
-                final float yDiff = getMotionEventY(ev, mActivePointerId);
+                if (mActivePointerId == INVALID_POINTER) {
+                    return false;
+                }
+                final float y = getMotionEventY(ev, mActivePointerId);
+                if (y == -1) {
+                    return false;
+                }
+                final float yDiff = y - mInitialMotionY;
                 if (yDiff > mTouchSlop && !mIsBeingDragged) {
                     mIsBeingDragged = true;
                 }
