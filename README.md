@@ -18,7 +18,7 @@ Inspired by [this project on dribble](https://dribbble.com/shots/2074667-Recipe-
 
 Min SDK version 16
 
-##Installing with [Gradle](http://gradle.org/)
+## Installing with [Gradle](http://gradle.org/)
 
 In your project level build.gradle
 
