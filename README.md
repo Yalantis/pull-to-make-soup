@@ -19,8 +19,19 @@ Inspired by [this project on dribble](https://dribbble.com/shots/2074667-Recipe-
 Min SDK version 16
 
 ##Installing with [Gradle](http://gradle.org/)
+In your project level build.gradle
 ```groovy
-compile 'com.yalantis:pulltomakesoup:1.0.1'
+ 	allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+```
+
+In your app level build.gradle
+```groovy
+ compile 'com.github.Yalantis:pull-to-make-soup:1.0.2'
 ```
 
 ##Usage
