@@ -1,4 +1,4 @@
-##PullToMakeSoup
+## PullToMakeSoup
 
 Custom animated pull-to-refresh that can be easily added to RecyclerView
 
@@ -14,13 +14,22 @@ Inspired by [this project on dribble](https://dribbble.com/shots/2074667-Recipe-
 
 <img src="https://raw.githubusercontent.com/Yalantis/PullToMakeSoup/master/PullToMakeSoupDemo/Resouces/recipe-finder.gif" />
 
-##Requirements
+## Requirements
 
 Min SDK version 16
 
 ##Installing with [Gradle](http://gradle.org/)
 
+In your project level build.gradle
 
+```groovy
+ 	allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+```
 
 In your app level build.gradle
 
@@ -28,7 +37,7 @@ In your app level build.gradle
  compile 'com.github.Yalantis:pull-to-make-soup:1.0.2'
 ```
 
-##Usage
+## Usage
 
 Include the library as local library project.
 
@@ -73,7 +82,7 @@ If you need to change progress state:
 ```java
 	mPullToRefreshView.setRefreshing(boolean isRefreshing)
 ```
-#Compatibility
+# Compatibility
   
   * Android JELLY BEAN 4.1+
 
