@@ -34,7 +34,7 @@ In your project level build.gradle
 In your app level build.gradle
 
 ```groovy
- compile 'com.github.Yalantis:pull-to-make-soup:1.0.2'
+ implementation 'com.github.Yalantis:pull-to-make-soup:1.0.3'
 ```
 
 ## Usage
@@ -86,13 +86,19 @@ If you need to change progress state:
   
   * Android JELLY BEAN 4.1+
 
-### Version: 1.0
 
-  * Initial Build
- 
+### Version: 1.0.3
+
+  * Updated dependencies
+  * Migrated to AndroidX
+
 ### Version: 1.0.1
 
   * Fixed disapearing animation (Flames,cover and water now disapearing properly).
+
+### Version: 1.0
+
+  * Initial Build
 
 #### Let us know!
 
