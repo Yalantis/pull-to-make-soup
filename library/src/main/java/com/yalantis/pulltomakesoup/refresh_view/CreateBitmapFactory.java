@@ -5,8 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.DrawableRes;
-import android.support.v4.content.res.ResourcesCompat;
+
+import androidx.annotation.DrawableRes;
+import androidx.core.content.res.ResourcesCompat;
 
 /**
  * Created by Alexey on 21.04.2016.

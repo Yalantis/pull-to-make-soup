@@ -9,10 +9,11 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.Transformation;
+
+import androidx.annotation.NonNull;
 
 import com.yalantis.pulltomakesoup.PullToRefreshView;
 import com.yalantis.pulltomakesoup.R;
